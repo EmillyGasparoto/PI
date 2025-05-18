@@ -1,0 +1,368 @@
+{% extends "layout.html" %}
+
+{% block title %}Appointments - Clinic Management System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">
+            <i class="fas fa-calendar-check me-2"></i>Appointments
+        </h1>
+        <a href="{{ url_for('appointments.create_appointment') }}" class="btn btn-primary">
+            <i class="fas fa-plus-circle me-1"></i>New Appointment
+        </a>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <!-- Search and filter -->
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search appointments...">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select" id="statusFilter">
+                        <option value="" selected>All Statuses</option>
+                        <option value="scheduled">Scheduled</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                        <option value="no_show">No Show</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <div class="d-flex justify-content-md-end">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-outline-secondary btn-print">
+                                <i class="fas fa-print me-1"></i>Print
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary">
+                                <i class="fas fa-file-export me-1"></i>Export
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Date tabs -->
+            <ul class="nav nav-tabs mb-3" id="dateTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="today-tab" data-bs-toggle="tab" data-bs-target="#today" type="button" role="tab" aria-controls="today" aria-selected="true">Today</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="upcoming-tab" data-bs-toggle="tab" data-bs-target="#upcoming" type="button" role="tab" aria-controls="upcoming" aria-selected="false">Upcoming</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="past-tab" data-bs-toggle="tab" data-bs-target="#past" type="button" role="tab" aria-controls="past" aria-selected="false">Past</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab" aria-controls="all" aria-selected="false">All</button>
+                </li>
+            </ul>
+
+            <!-- Appointments list -->
+            <div class="tab-content" id="dateTabContent">
+                <!-- Today's appointments -->
+                <div class="tab-pane fade show active" id="today" role="tabpanel" aria-labelledby="today-tab">
+                    {% set today_appointments = appointments|selectattr('appointment_date', 'equalto', now().date())|list %}
+                    {% if today_appointments|length > 0 %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Time</th>
+                                    {% if is_doctor or is_admin %}
+                                    <th>Patient</th>
+                                    {% endif %}
+                                    {% if is_patient or is_admin %}
+                                    <th>Doctor</th>
+                                    {% endif %}
+                                    <th>Reason</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for appointment in today_appointments|sort(attribute='appointment_time') %}
+                                <tr class="appointment-row" data-status="{{ appointment.status.value }}">
+                                    <td>{{ appointment.appointment_time.strftime('%I:%M %p') }}</td>
+                                    {% if is_doctor or is_admin %}
+                                    <td>
+                                        <a href="{{ url_for('patients.view_patient', id=appointment.patient_id) }}">
+                                            {{ appointment.patient.full_name }}
+                                        </a>
+                                    </td>
+                                    {% endif %}
+                                    {% if is_patient or is_admin %}
+                                    <td>
+                                        <a href="{{ url_for('doctors.view_doctor', id=appointment.doctor_id) }}">
+                                            {{ appointment.doctor.full_name }}
+                                        </a>
+                                    </td>
+                                    {% endif %}
+                                    <td>{{ appointment.reason|truncate(30) if appointment.reason else 'N/A' }}</td>
+                                    <td>
+                                        <span class="badge {{ 'bg-info' if appointment.status.value == 'scheduled' else 'bg-success' if appointment.status.value == 'completed' else 'bg-danger' if appointment.status.value == 'cancelled' else 'bg-warning' }}">
+                                            {{ appointment.status.value|title }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ url_for('appointments.view_appointment', id=appointment.id) }}" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="View Appointment">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ url_for('appointments.edit_appointment', id=appointment.id) }}" class="btn btn-sm btn-secondary" data-bs-toggle="tooltip" title="Edit Appointment">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>No appointments scheduled for today.
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Upcoming appointments -->
+                <div class="tab-pane fade" id="upcoming" role="tabpanel" aria-labelledby="upcoming-tab">
+                    {% set upcoming_appointments = appointments|selectattr('appointment_date', 'gt', now().date())|list %}
+                    {% if upcoming_appointments|length > 0 %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    {% if is_doctor or is_admin %}
+                                    <th>Patient</th>
+                                    {% endif %}
+                                    {% if is_patient or is_admin %}
+                                    <th>Doctor</th>
+                                    {% endif %}
+                                    <th>Reason</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for appointment in upcoming_appointments|sort(attribute='appointment_date') %}
+                                <tr class="appointment-row" data-status="{{ appointment.status.value }}">
+                                    <td>{{ appointment.appointment_date.strftime('%b %d, %Y') }}</td>
+                                    <td>{{ appointment.appointment_time.strftime('%I:%M %p') }}</td>
+                                    {% if is_doctor or is_admin %}
+                                    <td>
+                                        <a href="{{ url_for('patients.view_patient', id=appointment.patient_id) }}">
+                                            {{ appointment.patient.full_name }}
+                                        </a>
+                                    </td>
+                                    {% endif %}
+                                    {% if is_patient or is_admin %}
+                                    <td>
+                                        <a href="{{ url_for('doctors.view_doctor', id=appointment.doctor_id) }}">
+                                            {{ appointment.doctor.full_name }}
+                                        </a>
+                                    </td>
+                                    {% endif %}
+                                    <td>{{ appointment.reason|truncate(30) if appointment.reason else 'N/A' }}</td>
+                                    <td>
+                                        <span class="badge {{ 'bg-info' if appointment.status.value == 'scheduled' else 'bg-success' if appointment.status.value == 'completed' else 'bg-danger' if appointment.status.value == 'cancelled' else 'bg-warning' }}">
+                                            {{ appointment.status.value|title }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ url_for('appointments.view_appointment', id=appointment.id) }}" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="View Appointment">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ url_for('appointments.edit_appointment', id=appointment.id) }}" class="btn btn-sm btn-secondary" data-bs-toggle="tooltip" title="Edit Appointment">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>No upcoming appointments.
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Past appointments -->
+                <div class="tab-pane fade" id="past" role="tabpanel" aria-labelledby="past-tab">
+                    {% set past_appointments = appointments|selectattr('appointment_date', 'lt', now().date())|list %}
+                    {% if past_appointments|length > 0 %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    {% if is_doctor or is_admin %}
+                                    <th>Patient</th>
+                                    {% endif %}
+                                    {% if is_patient or is_admin %}
+                                    <th>Doctor</th>
+                                    {% endif %}
+                                    <th>Reason</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for appointment in past_appointments|sort(attribute='appointment_date', reverse=true) %}
+                                <tr class="appointment-row" data-status="{{ appointment.status.value }}">
+                                    <td>{{ appointment.appointment_date.strftime('%b %d, %Y') }}</td>
+                                    <td>{{ appointment.appointment_time.strftime('%I:%M %p') }}</td>
+                                    {% if is_doctor or is_admin %}
+                                    <td>
+                                        <a href="{{ url_for('patients.view_patient', id=appointment.patient_id) }}">
+                                            {{ appointment.patient.full_name }}
+                                        </a>
+                                    </td>
+                                    {% endif %}
+                                    {% if is_patient or is_admin %}
+                                    <td>
+                                        <a href="{{ url_for('doctors.view_doctor', id=appointment.doctor_id) }}">
+                                            {{ appointment.doctor.full_name }}
+                                        </a>
+                                    </td>
+                                    {% endif %}
+                                    <td>{{ appointment.reason|truncate(30) if appointment.reason else 'N/A' }}</td>
+                                    <td>
+                                        <span class="badge {{ 'bg-info' if appointment.status.value == 'scheduled' else 'bg-success' if appointment.status.value == 'completed' else 'bg-danger' if appointment.status.value == 'cancelled' else 'bg-warning' }}">
+                                            {{ appointment.status.value|title }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ url_for('appointments.view_appointment', id=appointment.id) }}" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="View Appointment">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            {% if is_doctor or is_admin %}
+                                            <a href="{{ url_for('medical_records.create_record') }}?appointment_id={{ appointment.id }}" class="btn btn-sm btn-info" data-bs-toggle="tooltip" title="Add Medical Record">
+                                                <i class="fas fa-notes-medical"></i>
+                                            </a>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>No past appointments.
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- All appointments -->
+                <div class="tab-pane fade" id="all" role="tabpanel" aria-labelledby="all-tab">
+                    {% if appointments and appointments|length > 0 %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    {% if is_doctor or is_admin %}
+                                    <th>Patient</th>
+                                    {% endif %}
+                                    {% if is_patient or is_admin %}
+                                    <th>Doctor</th>
+                                    {% endif %}
+                                    <th>Reason</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for appointment in appointments|sort(attribute='appointment_date', reverse=true) %}
+                                <tr class="appointment-row" data-status="{{ appointment.status.value }}">
+                                    <td>{{ appointment.appointment_date.strftime('%b %d, %Y') }}</td>
+                                    <td>{{ appointment.appointment_time.strftime('%I:%M %p') }}</td>
+                                    {% if is_doctor or is_admin %}
+                                    <td>
+                                        <a href="{{ url_for('patients.view_patient', id=appointment.patient_id) }}">
+                                            {{ appointment.patient.full_name }}
+                                        </a>
+                                    </td>
+                                    {% endif %}
+                                    {% if is_patient or is_admin %}
+                                    <td>
+                                        <a href="{{ url_for('doctors.view_doctor', id=appointment.doctor_id) }}">
+                                            {{ appointment.doctor.full_name }}
+                                        </a>
+                                    </td>
+                                    {% endif %}
+                                    <td>{{ appointment.reason|truncate(30) if appointment.reason else 'N/A' }}</td>
+                                    <td>
+                                        <span class="badge {{ 'bg-info' if appointment.status.value == 'scheduled' else 'bg-success' if appointment.status.value == 'completed' else 'bg-danger' if appointment.status.value == 'cancelled' else 'bg-warning' }}">
+                                            {{ appointment.status.value|title }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ url_for('appointments.view_appointment', id=appointment.id) }}" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="View Appointment">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            {% if appointment.status.value == 'scheduled' %}
+                                            <a href="{{ url_for('appointments.edit_appointment', id=appointment.id) }}" class="btn btn-sm btn-secondary" data-bs-toggle="tooltip" title="Edit Appointment">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            {% endif %}
+                                            {% if is_doctor or is_admin %}
+                                            {% if appointment.status.value == 'completed' and not appointment.medical_record %}
+                                            <a href="{{ url_for('medical_records.create_record') }}?appointment_id={{ appointment.id }}" class="btn btn-sm btn-info" data-bs-toggle="tooltip" title="Add Medical Record">
+                                                <i class="fas fa-notes-medical"></i>
+                                            </a>
+                                            {% endif %}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>No appointments found.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Status filter functionality
+    document.getElementById('statusFilter').addEventListener('change', function() {
+        const selectedStatus = this.value;
+        const rows = document.querySelectorAll('.appointment-row');
+        
+        rows.forEach(function(row) {
+            if (!selectedStatus || row.dataset.status === selectedStatus) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}

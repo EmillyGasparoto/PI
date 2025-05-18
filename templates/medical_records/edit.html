@@ -1,0 +1,159 @@
+{% extends "layout.html" %}
+
+{% block title %}Edit Medical Record - Clinic Management System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('auth.dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('medical_records.list_records') }}">Medical Records</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('medical_records.view_record', id=record.id) }}">Record #{{ record.id }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Edit</li>
+                </ol>
+            </nav>
+            <h1>
+                <i class="fas fa-edit me-2"></i>Edit Medical Record
+            </h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Medical Record Details</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('medical_records.edit_record', id=record.id) }}" id="editMedicalRecordForm" novalidate>
+                        <div class="row mb-3">
+                            <!-- Patient information (read-only) -->
+                            <div class="col-md-8 mb-3">
+                                <label class="form-label">Patient</label>
+                                <input type="text" class="form-control" value="{{ record.patient.full_name }}" readonly>
+                            </div>
+
+                            <!-- Related appointment (read-only if set) -->
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Related Appointment</label>
+                                <input type="text" class="form-control" value="{{ record.appointment.appointment_date.strftime('%b %d, %Y') if record.appointment else 'None' }}" readonly>
+                            </div>
+                        </div>
+
+                        <!-- Diagnosis (required) -->
+                        <div class="mb-3">
+                            <label for="diagnosis" class="form-label required">Diagnosis</label>
+                            <textarea class="form-control" id="diagnosis" name="diagnosis" rows="3" required>{{ record.diagnosis }}</textarea>
+                            <div class="invalid-feedback">Please provide a diagnosis.</div>
+                        </div>
+
+                        <!-- Treatment -->
+                        <div class="mb-3">
+                            <label for="treatment" class="form-label">Treatment</label>
+                            <textarea class="form-control" id="treatment" name="treatment" rows="3">{{ record.treatment }}</textarea>
+                        </div>
+
+                        <!-- Prescription -->
+                        <div class="mb-3">
+                            <label for="prescription" class="form-label">Prescription</label>
+                            <textarea class="form-control" id="prescription" name="prescription" rows="3">{{ record.prescription }}</textarea>
+                        </div>
+
+                        <!-- Additional Notes -->
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Additional Notes</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3">{{ record.notes }}</textarea>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('medical_records.view_record', id=record.id) }}" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-times me-1"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary" onclick="return validateForm('editMedicalRecordForm')">
+                                <i class="fas fa-save me-1"></i>Update Medical Record
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Record Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Record Details</h6>
+                        <p>
+                            <strong>Record ID:</strong> {{ record.id }}<br>
+                            <strong>Created On:</strong> {{ record.created_at.strftime('%b %d, %Y %I:%M %p') }}<br>
+                            <strong>Created By:</strong> 
+                            {% if record.creator %}
+                            {{ record.creator.first_name }} {{ record.creator.last_name }}
+                            {% else %}
+                            Unknown
+                            {% endif %}
+                            <br>
+                            <strong>Last Updated:</strong> {{ record.updated_at.strftime('%b %d, %Y %I:%M %p') }}
+                        </p>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Patient Information</h6>
+                        <p>
+                            <strong>Name:</strong> {{ record.patient.full_name }}<br>
+                            <strong>ID:</strong> {{ record.patient.id }}<br>
+                            <strong>Gender:</strong> {{ record.patient.gender }}<br>
+                            <strong>Date of Birth:</strong> {{ record.patient.date_of_birth.strftime('%b %d, %Y') if record.patient.date_of_birth else 'N/A' }}<br>
+                            <strong>Blood Group:</strong> {{ record.patient.blood_group or 'N/A' }}
+                        </p>
+                        <a href="{{ url_for('patients.view_patient', id=record.patient_id) }}" class="btn btn-sm btn-outline-info w-100">
+                            <i class="fas fa-user-injured me-1"></i>View Patient Profile
+                        </a>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Update Guidelines</h6>
+                        <ul class="small">
+                            <li>All changes are tracked and logged.</li>
+                            <li>Be precise and accurate with medical information.</li>
+                            <li>Complete all required fields.</li>
+                            <li>Record updates may be subject to review.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            {% if record.appointment %}
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-calendar-check me-2"></i>Related Appointment
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p>
+                        <strong>Date:</strong> {{ record.appointment.appointment_date.strftime('%b %d, %Y') }}<br>
+                        <strong>Time:</strong> {{ record.appointment.appointment_time.strftime('%I:%M %p') }}<br>
+                        <strong>Doctor:</strong> {{ record.appointment.doctor.full_name }}<br>
+                        <strong>Status:</strong> 
+                        <span class="badge {{ 'bg-success' if record.appointment.status.value == 'completed' else 'bg-info' }}">
+                            {{ record.appointment.status.value|title }}
+                        </span>
+                    </p>
+                    <a href="{{ url_for('appointments.view_appointment', id=record.appointment.id) }}" class="btn btn-sm btn-outline-success w-100">
+                        <i class="fas fa-calendar-alt me-1"></i>View Appointment Details
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

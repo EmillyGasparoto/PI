@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+
+{% block title %}Add New Specialization - Clinic Management System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('auth.dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('doctors.list_specializations') }}">Specializations</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Add New Specialization</li>
+                </ol>
+            </nav>
+            <h1>
+                <i class="fas fa-tag me-2"></i>Add New Specialization
+            </h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Specialization Details</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('doctors.create_specialization') }}" id="createSpecializationForm" novalidate>
+                        <div class="mb-3">
+                            <label for="name" class="form-label required">Specialization Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                            <div class="invalid-feedback">Please provide a specialization name.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="5" placeholder="Describe this medical specialization..."></textarea>
+                        </div>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('doctors.list_specializations') }}" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-times me-1"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary" onclick="return validateForm('createSpecializationForm')">
+                                <i class="fas fa-save me-1"></i>Save Specialization
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

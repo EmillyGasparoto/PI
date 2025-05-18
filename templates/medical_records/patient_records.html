@@ -1,0 +1,244 @@
+{% extends "layout.html" %}
+
+{% block title %}Patient Medical Records - Clinic Management System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('auth.dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('medical_records.list_records') }}">Medical Records</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ patient.full_name }}</li>
+                </ol>
+            </nav>
+            <div class="d-flex justify-content-between align-items-center">
+                <h1>
+                    <i class="fas fa-file-medical-alt me-2"></i>Medical Records: {{ patient.full_name }}
+                </h1>
+                {% if current_user.role.value in ['admin', 'doctor', 'staff'] %}
+                <a href="{{ url_for('medical_records.create_record') }}?patient_id={{ patient.id }}" class="btn btn-primary">
+                    <i class="fas fa-plus-circle me-1"></i>Add New Record
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Medical Records Timeline -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-history me-2"></i>Medical History
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Search and filter -->
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            <input type="text" id="searchRecords" class="form-control" placeholder="Search in medical records...">
+                        </div>
+                    </div>
+
+                    {% if records and records|length > 0 %}
+                    <div class="timeline">
+                        {% for record in records %}
+                        <div class="card mb-3 record-item">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-file-medical me-1"></i>
+                                    {{ record.created_at.strftime('%b %d, %Y') }}
+                                </h6>
+                                <div>
+                                    <span class="badge bg-secondary">Record #{{ record.id }}</span>
+                                    {% if record.appointment %}
+                                    <span class="badge bg-info">Appointment</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <h6 class="fw-bold">Diagnosis</h6>
+                                <p>{{ record.diagnosis }}</p>
+                                
+                                {% if record.treatment %}
+                                <h6 class="fw-bold">Treatment</h6>
+                                <p>{{ record.treatment }}</p>
+                                {% endif %}
+                                
+                                {% if record.prescription %}
+                                <h6 class="fw-bold">Prescription</h6>
+                                <div class="card bg-light mb-3">
+                                    <div class="card-body py-2">
+                                        <pre class="mb-0" style="white-space: pre-wrap;">{{ record.prescription }}</pre>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <small class="text-muted">
+                                        Created by: 
+                                        {% if record.creator %}
+                                        {{ record.creator.first_name }} {{ record.creator.last_name }}
+                                        {% else %}
+                                        Unknown
+                                        {% endif %}
+                                    </small>
+                                    <a href="{{ url_for('medical_records.view_record', id=record.id) }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye me-1"></i>View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>No medical records found for this patient.
+                        {% if current_user.role.value in ['admin', 'doctor', 'staff'] %}
+                        <a href="{{ url_for('medical_records.create_record') }}?patient_id={{ patient.id }}" class="alert-link">Create the first record</a>.
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <!-- Patient Information Card -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-user-injured me-2"></i>Patient Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <div class="icon-bg bg-light rounded-circle mx-auto mb-2" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-user-injured fa-3x text-info"></i>
+                        </div>
+                        <h5>{{ patient.full_name }}</h5>
+                        <p class="text-muted">Patient ID: {{ patient.id }}</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6 class="fw-bold border-bottom pb-2">Personal Details</h6>
+                        <table class="table table-sm">
+                            <tr>
+                                <th style="width: 40%">Date of Birth:</th>
+                                <td>{{ patient.date_of_birth.strftime('%b %d, %Y') if patient.date_of_birth else 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Age:</th>
+                                <td>
+                                    {% if patient.date_of_birth %}
+                                    {{ (now().date() - patient.date_of_birth).days // 365 }} years
+                                    {% else %}
+                                    N/A
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Gender:</th>
+                                <td>{{ patient.gender }}</td>
+                            </tr>
+                            <tr>
+                                <th>Blood Group:</th>
+                                <td>{{ patient.blood_group or 'N/A' }}</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6 class="fw-bold border-bottom pb-2">Contact Information</h6>
+                        <table class="table table-sm">
+                            <tr>
+                                <th style="width: 40%">Phone:</th>
+                                <td>{{ patient.phone or 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Email:</th>
+                                <td>{{ patient.user.email }}</td>
+                            </tr>
+                            <tr>
+                                <th>Address:</th>
+                                <td>{{ patient.address or 'N/A' }}</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('patients.view_patient', id=patient.id) }}" class="btn btn-outline-info">
+                            <i class="fas fa-user me-1"></i>View Full Profile
+                        </a>
+                        {% if current_user.role.value in ['admin', 'doctor', 'staff'] %}
+                        <a href="{{ url_for('appointments.create_appointment') }}?patient_id={{ patient.id }}" class="btn btn-outline-primary">
+                            <i class="fas fa-calendar-plus me-1"></i>Schedule Appointment
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Appointments Card -->
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-calendar-check me-2"></i>Recent Appointments
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if patient.appointments.all()|length > 0 %}
+                    <div class="list-group list-group-flush">
+                        {% for appointment in patient.appointments.order_by('appointment_date desc').limit(5).all() %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ appointment.appointment_date.strftime('%b %d, %Y') }}</h6>
+                                <span class="badge {{ 'bg-info' if appointment.status.value == 'scheduled' else 'bg-success' if appointment.status.value == 'completed' else 'bg-danger' if appointment.status.value == 'cancelled' else 'bg-warning' }}">
+                                    {{ appointment.status.value|title }}
+                                </span>
+                            </div>
+                            <p class="mb-1">{{ appointment.doctor.full_name }}</p>
+                            <small>{{ appointment.reason|truncate(50) if appointment.reason else 'No reason specified' }}</small>
+                            <div class="mt-2">
+                                <a href="{{ url_for('appointments.view_appointment', id=appointment.id) }}" class="btn btn-sm btn-outline-secondary">View</a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% if patient.appointments.count() > 5 %}
+                    <div class="d-grid gap-2 mt-2">
+                        <a href="{{ url_for('appointments.list_appointments') }}" class="btn btn-sm btn-outline-success">View All Appointments</a>
+                    </div>
+                    {% endif %}
+                    {% else %}
+                    <p class="text-center">No appointment history found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Search functionality for medical records
+    document.getElementById('searchRecords').addEventListener('keyup', function() {
+        let searchText = this.value.toLowerCase();
+        let records = document.querySelectorAll('.record-item');
+        
+        records.forEach(function(record) {
+            let recordText = record.textContent.toLowerCase();
+            if (recordText.includes(searchText)) {
+                record.style.display = '';
+            } else {
+                record.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}

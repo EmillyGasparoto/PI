@@ -1,0 +1,170 @@
+{% extends "layout.html" %}
+
+{% block title %}Create Medical Record - Clinic Management System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('auth.dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('medical_records.list_records') }}">Medical Records</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Create Medical Record</li>
+                </ol>
+            </nav>
+            <h1>
+                <i class="fas fa-notes-medical me-2"></i>Create Medical Record
+            </h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Medical Record Details</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('medical_records.create_record') }}" id="createMedicalRecordForm" novalidate>
+                        <div class="row mb-3">
+                            <!-- Patient selection -->
+                            <div class="col-md-8 mb-3">
+                                <label for="patient_id" class="form-label required">Patient</label>
+                                <select class="form-select" id="patient_id" name="patient_id" required>
+                                    <option value="" selected disabled>Select a patient</option>
+                                    {% for patient in patients %}
+                                    <option value="{{ patient.id }}">{{ patient.full_name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="invalid-feedback">Please select a patient.</div>
+                            </div>
+
+                            <!-- Related appointment (optional) -->
+                            <div class="col-md-4 mb-3">
+                                <label for="appointment_id" class="form-label">Related Appointment</label>
+                                <select class="form-select" id="appointment_id" name="appointment_id">
+                                    <option value="">None (Optional)</option>
+                                    {% for appointment in appointments %}
+                                    <option value="{{ appointment.id }}">
+                                        {{ appointment.appointment_date.strftime('%b %d, %Y') }} - {{ appointment.patient.full_name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Diagnosis (required) -->
+                        <div class="mb-3">
+                            <label for="diagnosis" class="form-label required">Diagnosis</label>
+                            <textarea class="form-control" id="diagnosis" name="diagnosis" rows="3" required></textarea>
+                            <div class="invalid-feedback">Please provide a diagnosis.</div>
+                        </div>
+
+                        <!-- Treatment -->
+                        <div class="mb-3">
+                            <label for="treatment" class="form-label">Treatment</label>
+                            <textarea class="form-control" id="treatment" name="treatment" rows="3"></textarea>
+                        </div>
+
+                        <!-- Prescription -->
+                        <div class="mb-3">
+                            <label for="prescription" class="form-label">Prescription</label>
+                            <textarea class="form-control" id="prescription" name="prescription" rows="3"></textarea>
+                        </div>
+
+                        <!-- Additional Notes -->
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Additional Notes</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('medical_records.list_records') }}" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-times me-1"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary" onclick="return validateForm('createMedicalRecordForm')">
+                                <i class="fas fa-save me-1"></i>Save Medical Record
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Guidelines for Medical Records</h6>
+                        <ul>
+                            <li>Ensure all information is accurate and complete.</li>
+                            <li>Use clear, concise language to describe the diagnosis.</li>
+                            <li>Include dosage information in prescriptions.</li>
+                            <li>Document any adverse reactions or allergies.</li>
+                            <li>Include follow-up instructions in the notes section.</li>
+                        </ul>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Patient Information</h6>
+                        <div id="patient-info" class="alert alert-secondary">
+                            Please select a patient to view their information.
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Record Privacy</h6>
+                        <p class="small">Medical records are private and can only be viewed by authorized medical staff and the patient themselves. All access is logged for security purposes.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Dynamic patient information
+    document.getElementById('patient_id').addEventListener('change', function() {
+        const patientId = this.value;
+        if (patientId) {
+            const patientName = this.options[this.selectedIndex].text;
+            document.getElementById('patient-info').innerHTML = 
+                `Selected: <strong>${patientName}</strong><br>
+                 Patient ID: ${patientId}<br>
+                 <span class="text-info">Loading patient history...</span>`;
+            
+            // In a real implementation, you might fetch patient history via AJAX
+            setTimeout(() => {
+                document.getElementById('patient-info').innerHTML = 
+                    `Selected: <strong>${patientName}</strong><br>
+                     Patient ID: ${patientId}<br>
+                     Access the patient's full profile for detailed history.`;
+            }, 1000);
+        } else {
+            document.getElementById('patient-info').innerHTML = 
+                `Please select a patient to view their information.`;
+        }
+    });
+    
+    // Pre-select appointment if provided in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const appointmentId = urlParams.get('appointment_id');
+    if (appointmentId) {
+        const appointmentSelect = document.getElementById('appointment_id');
+        for (let i = 0; i < appointmentSelect.options.length; i++) {
+            if (appointmentSelect.options[i].value === appointmentId) {
+                appointmentSelect.options[i].selected = true;
+                break;
+            }
+        }
+    }
+</script>
+{% endblock %}

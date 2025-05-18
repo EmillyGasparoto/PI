@@ -1,0 +1,204 @@
+{% extends "layout.html" %}
+
+{% block title %}Edit Appointment - Clinic Management System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('auth.dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('appointments.list_appointments') }}">Appointments</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('appointments.view_appointment', id=appointment.id) }}">Appointment #{{ appointment.id }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Edit</li>
+                </ol>
+            </nav>
+            <h1>
+                <i class="fas fa-edit me-2"></i>Edit Appointment
+            </h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Edit Appointment Details</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('appointments.edit_appointment', id=appointment.id) }}" id="editAppointmentForm" novalidate>
+                        <div class="row mb-3">
+                            <!-- Doctor and Patient (only editable by admin/staff) -->
+                            {% if current_user.role.value in ['admin', 'staff'] %}
+                            <div class="col-md-6 mb-3">
+                                <label for="doctor_id" class="form-label required">Doctor</label>
+                                <select class="form-select" id="doctor_id" name="doctor_id" required>
+                                    <option value="" disabled>Select a doctor</option>
+                                    {% for doctor in doctors %}
+                                    <option value="{{ doctor.id }}" {{ 'selected' if doctor.id == appointment.doctor_id else '' }}>
+                                        {{ doctor.full_name }} - {{ doctor.specialization.name if doctor.specialization else 'General' }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                <div class="invalid-feedback">Please select a doctor.</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="patient_id" class="form-label required">Patient</label>
+                                <select class="form-select" id="patient_id" name="patient_id" required>
+                                    <option value="" disabled>Select a patient</option>
+                                    {% for patient in patients %}
+                                    <option value="{{ patient.id }}" {{ 'selected' if patient.id == appointment.patient_id else '' }}>
+                                        {{ patient.full_name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                <div class="invalid-feedback">Please select a patient.</div>
+                            </div>
+                            {% else %}
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Doctor</label>
+                                <input type="text" class="form-control" value="{{ appointment.doctor.full_name }}" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Patient</label>
+                                <input type="text" class="form-control" value="{{ appointment.patient.full_name }}" readonly>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="row mb-3">
+                            <!-- Date and time selection -->
+                            <div class="col-md-6 mb-3">
+                                <label for="appointment_date" class="form-label required">Date</label>
+                                <input type="date" class="form-control" id="appointment_date" name="appointment_date" value="{{ appointment.appointment_date.strftime('%Y-%m-%d') }}" required>
+                                <div class="invalid-feedback">Please select a date.</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="appointment_time" class="form-label required">Time</label>
+                                <input type="time" class="form-control" id="appointment_time" name="appointment_time" value="{{ appointment.appointment_time.strftime('%H:%M') }}" required>
+                                <div class="invalid-feedback">Please select a time.</div>
+                            </div>
+                        </div>
+
+                        <!-- Reason for appointment -->
+                        <div class="mb-3">
+                            <label for="reason" class="form-label">Reason for Appointment</label>
+                            <textarea class="form-control" id="reason" name="reason" rows="3" placeholder="Briefly describe the reason for this appointment...">{{ appointment.reason }}</textarea>
+                        </div>
+
+                        <!-- Status (only editable by medical staff) -->
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-select" id="status" name="status">
+                                {% for status in ['scheduled', 'completed', 'cancelled', 'no_show'] %}
+                                <option value="{{ status }}" {{ 'selected' if appointment.status.value == status else '' }}>
+                                    {{ status|title }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-text">
+                                {% if current_user.role.value == 'patient' %}
+                                As a patient, you can only cancel an appointment.
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Notes (only visible/editable by medical staff) -->
+                        {% if current_user.role.value in ['admin', 'doctor', 'staff'] %}
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Notes (Only visible to medical staff)</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3">{{ appointment.notes }}</textarea>
+                        </div>
+                        {% endif %}
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('appointments.view_appointment', id=appointment.id) }}" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-times me-1"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary" onclick="return validateForm('editAppointmentForm')">
+                                <i class="fas fa-save me-1"></i>Update Appointment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Appointment Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Current Status</h6>
+                        <span class="badge {{ 'bg-info' if appointment.status.value == 'scheduled' else 'bg-success' if appointment.status.value == 'completed' else 'bg-danger' if appointment.status.value == 'cancelled' else 'bg-warning' }} mb-2">
+                            {{ appointment.status.value|title }}
+                        </span>
+                        <p class="small text-muted mb-0">Created: {{ appointment.created_at.strftime('%b %d, %Y %I:%M %p') }}</p>
+                        <p class="small text-muted">Last Updated: {{ appointment.updated_at.strftime('%b %d, %Y %I:%M %p') }}</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Update Guidelines</h6>
+                        <ul class="small">
+                            <li>You can reschedule an appointment to a future date and time.</li>
+                            <li>Updating the status to "Cancelled" cannot be undone.</li>
+                            <li>Only doctors and staff can mark appointments as "Completed" or "No Show".</li>
+                            <li>Notes are only visible to medical staff.</li>
+                        </ul>
+                    </div>
+
+                    {% if current_user.role.value in ['admin', 'doctor', 'staff'] %}
+                    <div class="d-grid gap-2 mt-4">
+                        {% if appointment.status.value == 'scheduled' %}
+                        <form action="{{ url_for('appointments.complete_appointment', id=appointment.id) }}" method="POST">
+                            <button type="submit" class="btn btn-success btn-sm w-100" onclick="return confirm('Are you sure you want to mark this appointment as completed?')">
+                                <i class="fas fa-check-circle me-1"></i>Mark as Completed
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Set minimum date to today for future appointments
+    const today = new Date().toISOString().split('T')[0];
+    
+    // Check if appointment is in the future
+    const appointmentDate = "{{ appointment.appointment_date.strftime('%Y-%m-%d') }}";
+    const isFutureAppointment = appointmentDate >= today;
+    
+    // Only allow changing the date to a future date for scheduled appointments
+    if ("{{ appointment.status.value }}" === "scheduled" && isFutureAppointment) {
+        document.getElementById('appointment_date').setAttribute('min', today);
+    } else {
+        // If appointment is in the past or already completed/cancelled, make date/time readonly
+        if ("{{ appointment.status.value }}" !== "scheduled" || !isFutureAppointment) {
+            document.getElementById('appointment_date').setAttribute('readonly', true);
+            document.getElementById('appointment_time').setAttribute('readonly', true);
+        }
+    }
+    
+    // For patients, limit status options to only allow cancellation
+    {% if current_user.role.value == 'patient' %}
+    const statusSelect = document.getElementById('status');
+    statusSelect.addEventListener('change', function() {
+        if (this.value !== 'scheduled' && this.value !== 'cancelled') {
+            alert('As a patient, you can only cancel an appointment.');
+            this.value = "{{ appointment.status.value }}";
+        }
+    });
+    {% endif %}
+</script>
+{% endblock %}
