@@ -1,7 +1,7 @@
 import os
 import logging
 
-from flask import Flask, redirect, url_for
+from flask import Flask, redirect, url_for, render_template
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -43,6 +43,7 @@ ma.init_app(app)
 jwt.init_app(app)
 migrate = Migrate(app, db)
 login_manager.init_app(app)
+# Set login view after initializing with app
 login_manager.login_view = 'auth.login'
 login_manager.login_message = 'Please log in to access this page.'
 login_manager.login_message_category = 'info'
@@ -71,14 +72,10 @@ def load_user(user_id):
     from models import User
     return User.query.get(int(user_id))
 
-# Root route to redirect to login page or dashboard
+# Root route to display the homepage
 @app.route('/')
 def index():
-    from flask import redirect, url_for
-    from flask_login import current_user
-    if current_user.is_authenticated:
-        return redirect(url_for('auth.dashboard'))
-    return redirect(url_for('auth.login'))
+    return render_template('index.html')
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
