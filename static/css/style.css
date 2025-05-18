@@ -37,7 +37,6 @@ body {
     display: flex;
     flex-direction: column;
 }
-
 .dashboard-card .icon-bg {
     width: 70px;
     height: 70px;

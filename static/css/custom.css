@@ -1,0 +1,147 @@
+:root {
+  --main-color: #47b1f8;            /* Azul principal */
+  --accent-color: #62c89f;          /* Verde suave para contrastes e saúde */
+  --text-color: #346bbd;            /* Azul texto */
+  --heading-principal: #033c63;     /* Azul escuro para títulos */
+  --header-footer-color: #3faee8;   /* Azul mais suave para header/footer */
+  --background-light: #f1f8f8;      /* Fundo geral claro */
+  --heading-color: var(--heading-principal); /* Títulos padrão */
+}
+
+/* TITULOS */
+h1, h2, h3 {
+  color: var(--heading-color);
+  font-weight: 600;
+}
+h1 {
+  color: var(--heading-principal);
+}
+
+.card-title.display-4 {
+  font-weight: 700;
+  text-align: center;
+  color: var(--heading-principal);
+}
+
+/* CORPO E FONTE */
+body {
+  color: var(--text-color);
+  background-color: var(--background-light);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* LINKS */
+a {
+  color: var(--main-color);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--accent-color);
+  text-decoration: underline;
+}
+
+/* BOTÕES */
+.btn, .btn-primary {
+  background-color: var(--accent-color); /* Verde mais suave */
+  border-color: var(--accent-color);
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: background-color 0.2s ease;
+}
+.btn:hover, .btn-primary:hover {
+  background-color: #4aa984; /* Verde mais escuro ao passar o mouse */
+}
+.btn a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* INPUTS */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 8px;
+  color: var(--text-color);
+  background-color: white;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--accent-color);
+  outline: none;
+  box-shadow: 0 0 5px rgba(98, 200, 159, 0.5); /* tom do verde */
+}
+
+/* NAVBAR, HEADER, FOOTER */
+header, footer, .navbar, .footer {
+  background-color: var(--header-footer-color) !important;
+  color: white !important;
+}
+header a, footer a, .navbar a, .footer a {
+  color: white !important;
+  text-decoration: none;
+}
+header a:hover, footer a:hover, .navbar a:hover, .footer a:hover {
+  color: #e0f4ff !important;
+}
+
+/* NavBar específica */
+.navbar {
+  background-color: var(--header-footer-color);
+  border-bottom: 1px solid #eee;
+}
+.navbar a {
+  color: white !important;
+}
+.navbar a:hover {
+  color: #e0f4ff !important;
+}
+
+/* CARDS */
+.card {
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  background-color: white;
+}
+.card-title {
+  color: var(--heading-color);
+}
+
+/* Headers de cards com bg-* */
+.card-header.bg-dark,
+.card-header.bg-success,
+.card-header.bg-primary,
+.card-header.bg-info,
+.card-header.bg-warning,
+.card-header.bg-danger {
+  background-color: var(--main-color) !important;
+  color: white !important;
+}
+
+/* Textos em destaque */
+.text-primary,
+.fw-bold,
+.lead,
+strong,
+b {
+  color: var(--accent-color) !important;
+}
+
+/* Centralizar conteúdos dos botões */
+.btn, .btn-primary {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
