@@ -2,9 +2,9 @@ const mysql = require("mysql2");
 
 const db = mysql.createConnection({
     host: "localhost",
-    user: "root", // Substitua pelo seu usuário do MySQL
-    password: "sua_senha", // Substitua pela senha correta
-    database: "clinitech"
+    user: "root",
+    password: "Laporine1940@", // ⚠️ Se seu banco não tem senha, deixe como ""
+    database: "clinictech"
 });
 
 db.connect((err) => {
