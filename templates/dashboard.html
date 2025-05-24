@@ -1,13 +1,13 @@
 {% extends "layout.html" %}
 
-{% block title %}Dashboard - Clinic Management System{% endblock %}
+{% block title %}Painel de Controle - Sistema de Gestão Clínica{% endblock %}
 
 {% block content %}
 <div class="container">
     <div class="row mb-4">
         <div class="col">
-            <h1 class="display-5">Dashboard</h1>
-            <p class="lead">Welcome, {{ user.first_name }} {{ user.last_name }}</p>
+            <h1 class="display-5">Painel de Controle</h1>
+            <p class="lead">Bem-vindo(a), {{ user.first_name }} {{ user.last_name }}</p>
         </div>
     </div>
 
@@ -16,25 +16,25 @@
             <div class="card">
                 <div class="card-header bg-primary text-white">
                     <h5 class="card-title mb-0">
-                        <i class="fas fa-user-circle me-2"></i>Profile Overview
+                        <i class="fas fa-user-circle me-2"></i>Resumo do Perfil
                     </h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <h6 class="fw-bold">Account Information</h6>
-                            <p><strong>Username:</strong> {{ user.username }}</p>
+                            <h6 class="fw-bold">Informações da Conta</h6>
+                            <p><strong>Usuário:</strong> {{ user.username }}</p>
                             <p><strong>Email:</strong> {{ user.email }}</p>
-                            <p><strong>Role:</strong> <span class="badge bg-secondary">{{ user.role|title }}</span></p>
+                            <p><strong>Função:</strong> <span class="badge bg-secondary">{{ user.role|title }}</span></p>
                         </div>
                         <div class="col-md-6">
-                            <h6 class="fw-bold">Account Actions</h6>
+                            <h6 class="fw-bold">Ações da Conta</h6>
                             <div class="d-grid gap-2">
                                 <a href="#" class="btn btn-sm btn-outline-primary">
-                                    <i class="fas fa-edit me-1"></i>Edit Profile
+                                    <i class="fas fa-edit me-1"></i>Editar Perfil
                                 </a>
                                 <a href="#" class="btn btn-sm btn-outline-secondary">
-                                    <i class="fas fa-key me-1"></i>Change Password
+                                    <i class="fas fa-key me-1"></i>Alterar Senha
                                 </a>
                             </div>
                         </div>
@@ -44,14 +44,13 @@
         </div>
     </div>
 
-    <!-- Different dashboards based on user role -->
     {% if user.role == 'patient' %}
     <div class="row mb-4">
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header bg-info text-white">
                     <h5 class="card-title mb-0">
-                        <i class="fas fa-calendar-check me-2"></i>Upcoming Appointments
+                        <i class="fas fa-calendar-check me-2"></i>Próximas Consultas
                     </h5>
                 </div>
                 <div class="card-body">
@@ -60,21 +59,21 @@
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>Date</th>
-                                    <th>Time</th>
-                                    <th>Doctor</th>
+                                    <th>Data</th>
+                                    <th>Hora</th>
+                                    <th>Médico</th>
                                     <th>Status</th>
-                                    <th>Actions</th>
+                                    <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for appointment in appointments %}
                                 {% if appointment.status.value == 'scheduled' %}
                                 <tr>
-                                    <td>{{ appointment.appointment_date.strftime('%b %d, %Y') }}</td>
-                                    <td>{{ appointment.appointment_time.strftime('%I:%M %p') }}</td>
+                                    <td>{{ appointment.appointment_date.strftime('%d/%m/%Y') }}</td>
+                                    <td>{{ appointment.appointment_time.strftime('%H:%M') }}</td>
                                     <td>{{ appointment.doctor.full_name }}</td>
-                                    <td><span class="badge bg-info">Scheduled</span></td>
+                                    <td><span class="badge bg-info">Agendada</span></td>
                                     <td>
                                         <a href="{{ url_for('appointments.view_appointment', id=appointment.id) }}" class="btn btn-sm btn-primary">
                                             <i class="fas fa-eye"></i>
@@ -87,41 +86,43 @@
                         </table>
                     </div>
                     {% else %}
-                    <p class="text-center">No upcoming appointments.</p>
+                    <p class="text-center">Nenhuma consulta agendada.</p>
                     {% endif %}
                     <div class="d-grid gap-2 mt-3">
                         <a href="{{ url_for('appointments.create_appointment') }}" class="btn btn-primary">
-                            <i class="fas fa-plus-circle me-1"></i>Schedule New Appointment
+                            <i class="fas fa-plus-circle me-1"></i>Agendar Nova Consulta
                         </a>
                     </div>
                 </div>
             </div>
         </div>
+
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header bg-success text-white">
                     <h5 class="card-title mb-0">
-                        <i class="fas fa-notes-medical me-2"></i>Medical Records
+                        <i class="fas fa-notes-medical me-2"></i>Prontuário Médico
                     </h5>
                 </div>
                 <div class="card-body">
-                    <p>Access your medical history and recent diagnoses.</p>
+                    <p>Acesse seu histórico médico e diagnósticos recentes.</p>
                     <div class="d-grid gap-2">
                         <a href="{{ url_for('medical_records.list_records') }}" class="btn btn-success">
-                            <i class="fas fa-clipboard-list me-1"></i>View Medical Records
+                            <i class="fas fa-clipboard-list me-1"></i>Ver Prontuários
                         </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
     {% elif user.role == 'doctor' %}
     <div class="row mb-4">
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header bg-info text-white">
                     <h5 class="card-title mb-0">
-                        <i class="fas fa-calendar-check me-2"></i>Today's Appointments
+                        <i class="fas fa-calendar-check me-2"></i>Consultas de Hoje
                     </h5>
                 </div>
                 <div class="card-body">
@@ -130,21 +131,21 @@
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>Time</th>
-                                    <th>Patient</th>
-                                    <th>Reason</th>
+                                    <th>Hora</th>
+                                    <th>Paciente</th>
+                                    <th>Motivo</th>
                                     <th>Status</th>
-                                    <th>Actions</th>
+                                    <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for appointment in appointments %}
                                 {% if appointment.appointment_date == now().date() and appointment.status.value == 'scheduled' %}
                                 <tr>
-                                    <td>{{ appointment.appointment_time.strftime('%I:%M %p') }}</td>
+                                    <td>{{ appointment.appointment_time.strftime('%H:%M') }}</td>
                                     <td>{{ appointment.patient.full_name }}</td>
                                     <td>{{ appointment.reason|truncate(20) }}</td>
-                                    <td><span class="badge bg-info">Scheduled</span></td>
+                                    <td><span class="badge bg-info">Agendada</span></td>
                                     <td>
                                         <a href="{{ url_for('appointments.view_appointment', id=appointment.id) }}" class="btn btn-sm btn-primary">
                                             <i class="fas fa-eye"></i>
@@ -157,133 +158,57 @@
                         </table>
                     </div>
                     {% else %}
-                    <p class="text-center">No appointments scheduled for today.</p>
+                    <p class="text-center">Nenhuma consulta para hoje.</p>
                     {% endif %}
                 </div>
             </div>
         </div>
+
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header bg-success text-white">
                     <h5 class="card-title mb-0">
-                        <i class="fas fa-user-injured me-2"></i>My Patients
+                        <i class="fas fa-user-injured me-2"></i>Meus Pacientes
                     </h5>
                 </div>
                 <div class="card-body">
-                    <p>Manage your patients and their medical records.</p>
+                    <p>Gerencie seus pacientes e registros médicos.</p>
                     <div class="d-grid gap-2">
                         <a href="{{ url_for('patients.list_patients') }}" class="btn btn-success">
-                            <i class="fas fa-users me-1"></i>View Patients
+                            <i class="fas fa-users me-1"></i>Ver Pacientes
                         </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
     {% elif user.role == 'admin' %}
     <div class="row">
+        {% for section in [
+            {'title': 'Pacientes', 'icon': 'user-injured', 'btn': 'patients.list_patients', 'color': 'primary'},
+            {'title': 'Médicos', 'icon': 'user-md', 'btn': 'doctors.list_doctors', 'color': 'success'},
+            {'title': 'Consultas', 'icon': 'calendar-check', 'btn': 'appointments.list_appointments', 'color': 'info'},
+            {'title': 'Sistema', 'icon': 'cogs', 'btn': 'settings.index', 'color': 'secondary'},
+        ] %}
         <div class="col-md-3">
             <div class="card dashboard-card">
                 <div class="card-body text-center">
-                    <div class="icon-bg bg-primary">
-                        <i class="fas fa-user-injured fa-2x text-white"></i>
+                    <div class="icon-bg bg-{{ section.color }}">
+                        <i class="fas fa-{{ section.icon }} fa-2x text-white"></i>
                     </div>
-                    <h5 class="card-title">Patients</h5>
-                    <p class="card-text">Manage patient profiles and records</p>
+                    <h5 class="card-title">{{ section.title }}</h5>
+                    <p class="card-text">Gerencie {{ section.title.lower() }}</p>
                     <div class="mt-auto">
-                        <a href="{{ url_for('patients.list_patients') }}" class="btn btn-primary">
-                            <i class="fas fa-users me-1"></i>View Patients
+                        <a href="{{ url_for(section.btn) }}" class="btn btn-{{ section.color }}">
+                            <i class="fas fa-chevron-right me-1"></i> Acessar
                         </a>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card dashboard-card">
-                <div class="card-body text-center">
-                    <div class="icon-bg bg-success">
-                        <i class="fas fa-user-md fa-2x text-white"></i>
-                    </div>
-                    <h5 class="card-title">Doctors</h5>
-                    <p class="card-text">Manage doctor profiles and specializations</p>
-                    <div class="mt-auto">
-                        <a href="{{ url_for('doctors.list_doctors') }}" class="btn btn-success">
-                            <i class="fas fa-stethoscope me-1"></i>View Doctors
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card dashboard-card">
-                <div class="card-body text-center">
-                    <div class="icon-bg bg-info">
-                        <i class="fas fa-calendar-check fa-2x text-white"></i>
-                    </div>
-                    <h5 class="card-title">Appointments</h5>
-                    <p class="card-text">Manage appointment schedules</p>
-                    <div class="mt-auto">
-                        <a href="{{ url_for('appointments.list_appointments') }}" class="btn btn-info">
-                            <i class="fas fa-calendar me-1"></i>View Appointments
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card dashboard-card">
-                <div class="card-body text-center">
-                    <div class="icon-bg bg-secondary">
-                        <i class="fas fa-cogs fa-2x text-white"></i>
-                    </div>
-                    <h5 class="card-title">System</h5>
-                    <p class="card-text">Manage system settings and specializations</p>
-                    <div class="mt-auto">
-                        <a href="{{ url_for('doctors.list_specializations') }}" class="btn btn-secondary">
-                            <i class="fas fa-sliders-h me-1"></i>Manage Settings
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+        {% endfor %}
     </div>
     {% endif %}
-
-    <!-- Recent activity for all users -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header bg-dark text-white">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-history me-2"></i>Recent Activity
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <i class="fas fa-sign-in-alt text-success me-2"></i>
-                                <span>Logged in to the system</span>
-                            </div>
-                            <span class="badge bg-secondary rounded-pill">Just now</span>
-                        </li>
-                        <!-- Additional activity items would be populated dynamically -->
-                        <li class="list-group-item text-center text-muted">
-                            No more activities to display.
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-    // Auto-refresh dashboard data every 5 minutes
-    setTimeout(function() {
-        location.reload();
-    }, 300000);
-</script>
 {% endblock %}

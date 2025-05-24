@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}Add New Specialization - Clinic Management System{% endblock %}
+{% block title %}Adicionar Nova Especialização - Sistema de Gestão Clínica{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -8,14 +8,12 @@
         <div class="col">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ url_for('auth.dashboard') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ url_for('doctors.list_specializations') }}">Specializations</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Add New Specialization</li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('auth.dashboard') }}">Painel</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('doctors.list_specializations') }}">Especializações</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Adicionar Nova Especialização</li>
                 </ol>
             </nav>
-            <h1>
-                <i class="fas fa-tag me-2"></i>Add New Specialization
-            </h1>
+            <h1><i class="fas fa-tag me-2"></i>Adicionar Nova Especialização</h1>
         </div>
     </div>
 
@@ -23,25 +21,25 @@
         <div class="col-md-8 mx-auto">
             <div class="card">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="card-title mb-0">Specialization Details</h5>
+                    <h5 class="card-title mb-0">Detalhes da Especialização</h5>
                 </div>
                 <div class="card-body">
                     <form method="POST" action="{{ url_for('doctors.create_specialization') }}" id="createSpecializationForm" novalidate>
                         <div class="mb-3">
-                            <label for="name" class="form-label required">Specialization Name</label>
+                            <label for="name" class="form-label required">Nome da Especialização</label>
                             <input type="text" class="form-control" id="name" name="name" required>
-                            <div class="invalid-feedback">Please provide a specialization name.</div>
+                            <div class="invalid-feedback">Por favor, informe o nome da especialização.</div>
                         </div>
                         <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
-                            <textarea class="form-control" id="description" name="description" rows="5" placeholder="Describe this medical specialization..."></textarea>
+                            <label for="description" class="form-label">Descrição</label>
+                            <textarea class="form-control" id="description" name="description" rows="5" placeholder="Descreva esta especialização médica..."></textarea>
                         </div>
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                             <a href="{{ url_for('doctors.list_specializations') }}" class="btn btn-secondary me-md-2">
-                                <i class="fas fa-times me-1"></i>Cancel
+                                <i class="fas fa-times me-1"></i>Cancelar
                             </a>
                             <button type="submit" class="btn btn-primary" onclick="return validateForm('createSpecializationForm')">
-                                <i class="fas fa-save me-1"></i>Save Specialization
+                                <i class="fas fa-save me-1"></i>Salvar Especialização
                             </button>
                         </div>
                     </form>

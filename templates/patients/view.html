@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}Patient Details - Clinic Management System{% endblock %}
+{% block title %}Detalhes do Paciente - Sistema de Gestão Clínica{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -8,111 +8,76 @@
         <div class="col">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ url_for('auth.dashboard') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ url_for('patients.list_patients') }}">Patients</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Patient Details</li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('auth.dashboard') }}">Painel</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('patients.list_patients') }}">Pacientes</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Detalhes</li>
                 </ol>
             </nav>
-            <h1>
-                <i class="fas fa-user-injured me-2"></i>Patient Details
-            </h1>
+            <h1><i class="fas fa-user-injured me-2"></i>Detalhes do Paciente</h1>
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-8">
-            <!-- Patient Information -->
+            <!-- Informações do Paciente -->
             <div class="card mb-4">
                 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-info-circle me-2"></i>Patient Information
-                    </h5>
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Informações</h5>
                     <div>
                         {% if current_user.role.value in ['admin', 'doctor'] %}
                         <a href="{{ url_for('patients.edit_patient', id=patient.id) }}" class="btn btn-sm btn-light">
-                            <i class="fas fa-edit me-1"></i>Edit
+                            <i class="fas fa-edit me-1"></i>Editar
                         </a>
                         {% endif %}
                         {% if current_user.role.value == 'admin' %}
-                        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deletePatientModal">
-                            <i class="fas fa-trash me-1"></i>Delete
+                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deletePatientModal">
+                            <i class="fas fa-trash me-1"></i>Excluir
                         </button>
                         {% endif %}
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <h6 class="fw-bold">Personal Details</h6>
-                                <table class="table table-sm">
-                                    <tr>
-                                        <th style="width: 40%">Name:</th>
-                                        <td>{{ patient.user.first_name }} {{ patient.user.last_name }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Gender:</th>
-                                        <td>{{ patient.gender }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Date of Birth:</th>
-                                        <td>{{ patient.date_of_birth.strftime('%b %d, %Y') if patient.date_of_birth else 'N/A' }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Blood Group:</th>
-                                        <td>{{ patient.blood_group or 'N/A' }}</td>
-                                    </tr>
-                                </table>
-                            </div>
+                        <!-- Detalhes Pessoais -->
+                        <div class="col-md-6 mb-3">
+                            <h6 class="fw-bold">Dados Pessoais</h6>
+                            <table class="table table-sm">
+                                <tr><th>Nome:</th><td>{{ patient.user.first_name }} {{ patient.user.last_name }}</td></tr>
+                                <tr><th>Gênero:</th><td>{{ patient.gender }}</td></tr>
+                                <tr><th>Nascimento:</th><td>{{ patient.date_of_birth.strftime('%d/%m/%Y') if patient.date_of_birth else 'N/A' }}</td></tr>
+                                <tr><th>Tipo Sanguíneo:</th><td>{{ patient.blood_group or 'N/A' }}</td></tr>
+                            </table>
                         </div>
-                        
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <h6 class="fw-bold">Contact Information</h6>
-                                <table class="table table-sm">
-                                    <tr>
-                                        <th style="width: 40%">Phone:</th>
-                                        <td>{{ patient.phone or 'N/A' }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Email:</th>
-                                        <td>{{ patient.user.email }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Address:</th>
-                                        <td>{{ patient.address or 'N/A' }}</td>
-                                    </tr>
-                                </table>
-                            </div>
+                        <!-- Contato -->
+                        <div class="col-md-6 mb-3">
+                            <h6 class="fw-bold">Contato</h6>
+                            <table class="table table-sm">
+                                <tr><th>Telefone:</th><td>{{ patient.phone or 'N/A' }}</td></tr>
+                                <tr><th>Email:</th><td>{{ patient.user.email }}</td></tr>
+                                <tr><th>Endereço:</th><td>{{ patient.address or 'N/A' }}</td></tr>
+                            </table>
                         </div>
                     </div>
 
+                    <!-- Contato de Emergência -->
                     <div class="row">
                         <div class="col-12">
-                            <h6 class="fw-bold">Emergency Contact</h6>
+                            <h6 class="fw-bold">Contato de Emergência</h6>
                             <table class="table table-sm">
-                                <tr>
-                                    <th style="width: 20%">Name:</th>
-                                    <td>{{ patient.emergency_contact_name or 'N/A' }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Phone:</th>
-                                    <td>{{ patient.emergency_contact_phone or 'N/A' }}</td>
-                                </tr>
+                                <tr><th>Nome:</th><td>{{ patient.emergency_contact_name or 'N/A' }}</td></tr>
+                                <tr><th>Telefone:</th><td>{{ patient.emergency_contact_phone or 'N/A' }}</td></tr>
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Medical Records -->
+            <!-- Registros Médicos -->
             <div class="card mb-4">
                 <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-notes-medical me-2"></i>Medical Records
-                    </h5>
+                    <h5 class="mb-0"><i class="fas fa-notes-medical me-2"></i>Registros Médicos</h5>
                     <a href="{{ url_for('medical_records.patient_records', patient_id=patient.id) }}" class="btn btn-sm btn-light">
-                        <i class="fas fa-list me-1"></i>View All Records
+                        <i class="fas fa-list me-1"></i>Ver Todos
                     </a>
                 </div>
                 <div class="card-body">
@@ -120,25 +85,25 @@
                     <div class="list-group">
                         {% for record in patient.medical_records.order_by('created_at desc').limit(5).all() %}
                         <a href="{{ url_for('medical_records.view_record', id=record.id) }}" class="list-group-item list-group-item-action">
-                            <div class="d-flex w-100 justify-content-between">
+                            <div class="d-flex justify-content-between">
                                 <h6 class="mb-1">{{ record.diagnosis|truncate(50) }}</h6>
-                                <small>{{ record.created_at.strftime('%b %d, %Y') }}</small>
+                                <small>{{ record.created_at.strftime('%d/%m/%Y') }}</small>
                             </div>
-                            <p class="mb-1">{{ record.treatment|truncate(100) if record.treatment else 'No treatment specified' }}</p>
+                            <p class="mb-1">{{ record.treatment|truncate(100) if record.treatment else 'Sem tratamento informado' }}</p>
                         </a>
                         {% endfor %}
                     </div>
                     {% if patient.medical_records.count() > 5 %}
-                    <div class="d-grid gap-2 mt-3">
-                        <a href="{{ url_for('medical_records.patient_records', patient_id=patient.id) }}" class="btn btn-sm btn-outline-info">View All Records</a>
+                    <div class="d-grid mt-3">
+                        <a href="{{ url_for('medical_records.patient_records', patient_id=patient.id) }}" class="btn btn-sm btn-outline-info">Ver Todos</a>
                     </div>
                     {% endif %}
                     {% else %}
-                    <p class="text-center">No medical records available for this patient.</p>
+                    <p class="text-center">Nenhum registro médico disponível.</p>
                     {% if current_user.role.value in ['admin', 'doctor'] %}
-                    <div class="d-grid gap-2">
+                    <div class="d-grid">
                         <a href="{{ url_for('medical_records.create_record') }}" class="btn btn-outline-info">
-                            <i class="fas fa-plus-circle me-1"></i>Add Medical Record
+                            <i class="fas fa-plus-circle me-1"></i>Adicionar Registro
                         </a>
                     </div>
                     {% endif %}
@@ -147,104 +112,63 @@
             </div>
         </div>
 
+        <!-- Lado Direito -->
         <div class="col-md-4">
-            <!-- Appointments -->
+            <!-- Consultas -->
             <div class="card mb-4">
                 <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-calendar-check me-2"></i>Appointments
-                    </h5>
-                    <div>
-                        <a href="{{ url_for('appointments.create_appointment') }}" class="btn btn-sm btn-light">
-                            <i class="fas fa-plus-circle me-1"></i>New
-                        </a>
-                    </div>
+                    <h5 class="mb-0"><i class="fas fa-calendar-check me-2"></i>Consultas</h5>
+                    <a href="{{ url_for('appointments.create_appointment') }}" class="btn btn-sm btn-light">
+                        <i class="fas fa-plus-circle me-1"></i>Novo
+                    </a>
                 </div>
                 <div class="card-body">
                     {% if patient.appointments.all()|length > 0 %}
                     <div class="list-group">
                         {% for appointment in patient.appointments.order_by('appointment_date desc').limit(5).all() %}
                         <a href="{{ url_for('appointments.view_appointment', id=appointment.id) }}" class="list-group-item list-group-item-action">
-                            <div class="d-flex w-100 justify-content-between">
+                            <div class="d-flex justify-content-between">
                                 <h6 class="mb-1">Dr. {{ appointment.doctor.user.first_name }} {{ appointment.doctor.user.last_name }}</h6>
                                 <small class="badge {{ 'bg-info' if appointment.status.value == 'scheduled' else 'bg-success' if appointment.status.value == 'completed' else 'bg-danger' if appointment.status.value == 'cancelled' else 'bg-warning' }}">
                                     {{ appointment.status.value|title }}
                                 </small>
                             </div>
-                            <p class="mb-1">{{ appointment.appointment_date.strftime('%b %d, %Y') }} at {{ appointment.appointment_time.strftime('%I:%M %p') }}</p>
-                            <small>{{ appointment.reason|truncate(50) if appointment.reason else 'No reason specified' }}</small>
+                            <p class="mb-1">{{ appointment.appointment_date.strftime('%d/%m/%Y') }} às {{ appointment.appointment_time.strftime('%H:%M') }}</p>
+                            <small>{{ appointment.reason|truncate(50) if appointment.reason else 'Sem motivo informado' }}</small>
                         </a>
                         {% endfor %}
                     </div>
                     {% if patient.appointments.count() > 5 %}
-                    <div class="d-grid gap-2 mt-3">
-                        <a href="{{ url_for('appointments.list_appointments') }}" class="btn btn-sm btn-outline-success">View All Appointments</a>
+                    <div class="d-grid mt-3">
+                        <a href="{{ url_for('appointments.list_appointments') }}" class="btn btn-sm btn-outline-success">Ver Todas</a>
                     </div>
                     {% endif %}
                     {% else %}
-                    <p class="text-center">No appointments scheduled for this patient.</p>
-                    <div class="d-grid gap-2">
+                    <p class="text-center">Nenhuma consulta agendada.</p>
+                    <div class="d-grid">
                         <a href="{{ url_for('appointments.create_appointment') }}" class="btn btn-outline-success">
-                            <i class="fas fa-plus-circle me-1"></i>Schedule Appointment
+                            <i class="fas fa-plus-circle me-1"></i>Agendar Consulta
                         </a>
                     </div>
                     {% endif %}
                 </div>
             </div>
 
-            <!-- Account Information -->
+            <!-- Conta -->
             <div class="card mb-4">
                 <div class="card-header bg-secondary text-white">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-user-circle me-2"></i>Account Information
-                    </h5>
+                    <h5 class="mb-0"><i class="fas fa-user-circle me-2"></i>Conta</h5>
                 </div>
                 <div class="card-body">
                     <table class="table table-sm">
-                        <tr>
-                            <th style="width: 40%">Username:</th>
-                            <td>{{ patient.user.username }}</td>
-                        </tr>
-                        <tr>
-                            <th>Registered:</th>
-                            <td>{{ patient.user.created_at.strftime('%b %d, %Y') }}</td>
-                        </tr>
-                        <tr>
-                            <th>Last Updated:</th>
-                            <td>{{ patient.updated_at.strftime('%b %d, %Y') }}</td>
-                        </tr>
-                        <tr>
-                            <th>Status:</th>
-                            <td><span class="badge bg-success">Active</span></td>
-                        </tr>
+                        <tr><th>Usuário:</th><td>{{ patient.user.username }}</td></tr>
+                        <tr><th>Criado em:</th><td>{{ patient.user.created_at.strftime('%d/%m/%Y') }}</td></tr>
+                        <tr><th>Última atualização:</th><td>{{ patient.updated_at.strftime('%d/%m/%Y') }}</td></tr>
+                        <tr><th>Status:</th><td><span class="badge bg-success">Ativo</span></td></tr>
                     </table>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Delete Patient Modal -->
-    {% if current_user.role.value == 'admin' %}
-    <div class="modal fade" id="deletePatientModal" tabindex="-1" aria-labelledby="deletePatientModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title" id="deletePatientModalLabel">Confirm Delete</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Are you sure you want to delete <strong>{{ patient.user.first_name }} {{ patient.user.last_name }}</strong>?</p>
-                    <p class="text-danger">This action cannot be undone and will delete all associated records!</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <form action="{{ url_for('patients.delete_patient', id=patient.id) }}" method="POST">
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
 </div>
 {% endblock %}

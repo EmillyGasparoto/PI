@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}Edit Patient - Clinic Management System{% endblock %}
+{% block title %}Editar Paciente - Sistema de Gestão Clínica{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -8,13 +8,13 @@
         <div class="col">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ url_for('auth.dashboard') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ url_for('patients.list_patients') }}">Patients</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Edit Patient</li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('auth.dashboard') }}">Início</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('patients.list_patients') }}">Pacientes</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Editar Paciente</li>
                 </ol>
             </nav>
             <h1>
-                <i class="fas fa-user-edit me-2"></i>Edit Patient: {{ patient.user.first_name }} {{ patient.user.last_name }}
+                <i class="fas fa-user-edit me-2"></i>Editar Paciente: {{ patient.user.first_name }} {{ patient.user.last_name }}
             </h1>
         </div>
     </div>
@@ -23,56 +23,56 @@
         <div class="col-md-10 mx-auto">
             <div class="card">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="card-title mb-0">Edit Patient Information</h5>
+                    <h5 class="card-title mb-0">Informações do Paciente</h5>
                 </div>
                 <div class="card-body">
                     <form method="POST" action="{{ url_for('patients.edit_patient', id=patient.id) }}" id="editPatientForm" novalidate>
                         <div class="row mb-3">
                             <div class="col-12">
-                                <h6 class="fw-bold border-bottom pb-2 mb-3">Account Information</h6>
+                                <h6 class="fw-bold border-bottom pb-2 mb-3">Dados da Conta</h6>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="first_name" class="form-label required">First Name</label>
+                                <label for="first_name" class="form-label required">Nome</label>
                                 <input type="text" class="form-control" id="first_name" name="first_name" value="{{ patient.user.first_name }}" required>
-                                <div class="invalid-feedback">Please provide a first name.</div>
+                                <div class="invalid-feedback">Informe o nome.</div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="last_name" class="form-label required">Last Name</label>
+                                <label for="last_name" class="form-label required">Sobrenome</label>
                                 <input type="text" class="form-control" id="last_name" name="last_name" value="{{ patient.user.last_name }}" required>
-                                <div class="invalid-feedback">Please provide a last name.</div>
+                                <div class="invalid-feedback">Informe o sobrenome.</div>
                             </div>
                             {% if current_user.role.value == 'admin' %}
                             <div class="col-md-6 mb-3">
-                                <label for="email" class="form-label required">Email</label>
+                                <label for="email" class="form-label required">E-mail</label>
                                 <input type="email" class="form-control" id="email" name="email" value="{{ patient.user.email }}" required>
-                                <div class="invalid-feedback">Please provide a valid email address.</div>
+                                <div class="invalid-feedback">Informe um e-mail válido.</div>
                             </div>
                             {% endif %}
                         </div>
 
                         <div class="row mb-3">
                             <div class="col-12">
-                                <h6 class="fw-bold border-bottom pb-2 mb-3">Personal Details</h6>
+                                <h6 class="fw-bold border-bottom pb-2 mb-3">Dados Pessoais</h6>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="date_of_birth" class="form-label required">Date of Birth</label>
+                                <label for="date_of_birth" class="form-label required">Data de Nascimento</label>
                                 <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" value="{{ patient.date_of_birth.strftime('%Y-%m-%d') if patient.date_of_birth else '' }}" required>
-                                <div class="invalid-feedback">Please provide a date of birth.</div>
+                                <div class="invalid-feedback">Informe a data de nascimento.</div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="gender" class="form-label required">Gender</label>
+                                <label for="gender" class="form-label required">Gênero</label>
                                 <select class="form-select" id="gender" name="gender" required>
-                                    <option value="" disabled>Select gender</option>
-                                    <option value="Male" {{ 'selected' if patient.gender == 'Male' else '' }}>Male</option>
-                                    <option value="Female" {{ 'selected' if patient.gender == 'Female' else '' }}>Female</option>
-                                    <option value="Other" {{ 'selected' if patient.gender == 'Other' else '' }}>Other</option>
+                                    <option value="" disabled>Selecione o gênero</option>
+                                    <option value="Male" {{ 'selected' if patient.gender == 'Male' else '' }}>Masculino</option>
+                                    <option value="Female" {{ 'selected' if patient.gender == 'Female' else '' }}>Feminino</option>
+                                    <option value="Other" {{ 'selected' if patient.gender == 'Other' else '' }}>Outro</option>
                                 </select>
-                                <div class="invalid-feedback">Please select a gender.</div>
+                                <div class="invalid-feedback">Selecione o gênero.</div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="blood_group" class="form-label">Blood Group</label>
+                                <label for="blood_group" class="form-label">Tipo Sanguíneo</label>
                                 <select class="form-select" id="blood_group" name="blood_group">
-                                    <option value="">Select blood group (optional)</option>
+                                    <option value="">Selecione (opcional)</option>
                                     <option value="A+" {{ 'selected' if patient.blood_group == 'A+' else '' }}>A+</option>
                                     <option value="A-" {{ 'selected' if patient.blood_group == 'A-' else '' }}>A-</option>
                                     <option value="B+" {{ 'selected' if patient.blood_group == 'B+' else '' }}>B+</option>
@@ -84,35 +84,35 @@
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="phone" class="form-label">Phone Number</label>
-                                <input type="tel" class="form-control" id="phone" name="phone" value="{{ patient.phone }}" placeholder="e.g. +1234567890">
+                                <label for="phone" class="form-label">Telefone</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" value="{{ patient.phone }}" placeholder="Ex: +5511999999999">
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <div class="col-12">
-                                <h6 class="fw-bold border-bottom pb-2 mb-3">Address & Emergency Contact</h6>
+                                <h6 class="fw-bold border-bottom pb-2 mb-3">Endereço e Contato de Emergência</h6>
                             </div>
                             <div class="col-md-12 mb-3">
-                                <label for="address" class="form-label">Address</label>
+                                <label for="address" class="form-label">Endereço</label>
                                 <textarea class="form-control" id="address" name="address" rows="2">{{ patient.address }}</textarea>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="emergency_contact_name" class="form-label">Emergency Contact Name</label>
+                                <label for="emergency_contact_name" class="form-label">Nome do Contato de Emergência</label>
                                 <input type="text" class="form-control" id="emergency_contact_name" name="emergency_contact_name" value="{{ patient.emergency_contact_name }}">
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="emergency_contact_phone" class="form-label">Emergency Contact Phone</label>
+                                <label for="emergency_contact_phone" class="form-label">Telefone de Emergência</label>
                                 <input type="tel" class="form-control" id="emergency_contact_phone" name="emergency_contact_phone" value="{{ patient.emergency_contact_phone }}">
                             </div>
                         </div>
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                             <a href="{{ url_for('patients.view_patient', id=patient.id) }}" class="btn btn-secondary me-md-2">
-                                <i class="fas fa-times me-1"></i>Cancel
+                                <i class="fas fa-times me-1"></i>Cancelar
                             </a>
                             <button type="submit" class="btn btn-primary" onclick="return validateForm('editPatientForm')">
-                                <i class="fas fa-save me-1"></i>Update Patient
+                                <i class="fas fa-save me-1"></i>Atualizar
                             </button>
                         </div>
                     </form>

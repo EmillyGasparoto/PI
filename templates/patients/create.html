@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}Add New Patient - Clinic Management System{% endblock %}
+{% block title %}Adicionar Novo Paciente - Sistema de Clínica{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -8,14 +8,12 @@
         <div class="col">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ url_for('auth.dashboard') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ url_for('patients.list_patients') }}">Patients</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Add New Patient</li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('auth.dashboard') }}">Início</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('patients.list_patients') }}">Pacientes</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Novo Paciente</li>
                 </ol>
             </nav>
-            <h1>
-                <i class="fas fa-user-plus me-2"></i>Add New Patient
-            </h1>
+            <h1><i class="fas fa-user-plus me-2"></i>Adicionar Paciente</h1>
         </div>
     </div>
 
@@ -23,70 +21,73 @@
         <div class="col-md-10 mx-auto">
             <div class="card">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="card-title mb-0">Patient Information</h5>
+                    <h5 class="card-title mb-0">Informações do Paciente</h5>
                 </div>
                 <div class="card-body">
                     <form method="POST" action="{{ url_for('patients.create_patient') }}" id="createPatientForm" novalidate>
+                        
+                        <!-- Informações da Conta -->
                         <div class="row mb-3">
                             <div class="col-12">
-                                <h6 class="fw-bold border-bottom pb-2 mb-3">Account Information</h6>
+                                <h6 class="fw-bold border-bottom pb-2 mb-3">Informações da Conta</h6>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="first_name" class="form-label required">First Name</label>
+                                <label for="first_name" class="form-label required">Nome</label>
                                 <input type="text" class="form-control" id="first_name" name="first_name" required>
-                                <div class="invalid-feedback">Please provide a first name.</div>
+                                <div class="invalid-feedback">Informe o nome.</div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="last_name" class="form-label required">Last Name</label>
+                                <label for="last_name" class="form-label required">Sobrenome</label>
                                 <input type="text" class="form-control" id="last_name" name="last_name" required>
-                                <div class="invalid-feedback">Please provide a last name.</div>
+                                <div class="invalid-feedback">Informe o sobrenome.</div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="email" class="form-label required">Email</label>
+                                <label for="email" class="form-label required">E-mail</label>
                                 <input type="email" class="form-control" id="email" name="email" required>
-                                <div class="invalid-feedback">Please provide a valid email address.</div>
+                                <div class="invalid-feedback">Informe um e-mail válido.</div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="username" class="form-label required">Username</label>
+                                <label for="username" class="form-label required">Usuário</label>
                                 <input type="text" class="form-control" id="username" name="username" required>
-                                <div class="invalid-feedback">Please provide a username.</div>
+                                <div class="invalid-feedback">Informe um nome de usuário.</div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="password" class="form-label required">Password</label>
+                                <label for="password" class="form-label required">Senha</label>
                                 <input type="password" class="form-control" id="password" name="password" required>
-                                <div class="form-text">Password must be at least 8 characters long.</div>
-                                <div class="invalid-feedback">Please provide a password.</div>
+                                <div class="form-text">A senha deve ter pelo menos 8 caracteres.</div>
+                                <div class="invalid-feedback">Informe uma senha.</div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="confirm_password" class="form-label required">Confirm Password</label>
+                                <label for="confirm_password" class="form-label required">Confirmar Senha</label>
                                 <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
-                                <div class="invalid-feedback">Passwords do not match.</div>
+                                <div class="invalid-feedback">As senhas não coincidem.</div>
                             </div>
                         </div>
 
+                        <!-- Detalhes Pessoais -->
                         <div class="row mb-3">
                             <div class="col-12">
-                                <h6 class="fw-bold border-bottom pb-2 mb-3">Personal Details</h6>
+                                <h6 class="fw-bold border-bottom pb-2 mb-3">Detalhes Pessoais</h6>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="date_of_birth" class="form-label required">Date of Birth</label>
+                                <label for="date_of_birth" class="form-label required">Data de Nascimento</label>
                                 <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" required>
-                                <div class="invalid-feedback">Please provide a date of birth.</div>
+                                <div class="invalid-feedback">Informe a data de nascimento.</div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="gender" class="form-label required">Gender</label>
+                                <label for="gender" class="form-label required">Gênero</label>
                                 <select class="form-select" id="gender" name="gender" required>
-                                    <option value="" selected disabled>Select gender</option>
-                                    <option value="Male">Male</option>
-                                    <option value="Female">Female</option>
-                                    <option value="Other">Other</option>
+                                    <option value="" selected disabled>Selecione o gênero</option>
+                                    <option value="Male">Masculino</option>
+                                    <option value="Female">Feminino</option>
+                                    <option value="Other">Outro</option>
                                 </select>
-                                <div class="invalid-feedback">Please select a gender.</div>
+                                <div class="invalid-feedback">Selecione o gênero.</div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="blood_group" class="form-label">Blood Group</label>
+                                <label for="blood_group" class="form-label">Tipo Sanguíneo</label>
                                 <select class="form-select" id="blood_group" name="blood_group">
-                                    <option value="" selected>Select blood group (optional)</option>
+                                    <option value="" selected>Selecione (opcional)</option>
                                     <option value="A+">A+</option>
                                     <option value="A-">A-</option>
                                     <option value="B+">B+</option>
@@ -98,35 +99,37 @@
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="phone" class="form-label">Phone Number</label>
-                                <input type="tel" class="form-control" id="phone" name="phone" placeholder="e.g. +1234567890">
+                                <label for="phone" class="form-label">Telefone</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" placeholder="Ex: +55 11987654321">
                             </div>
                         </div>
 
+                        <!-- Endereço e Contato de Emergência -->
                         <div class="row mb-3">
                             <div class="col-12">
-                                <h6 class="fw-bold border-bottom pb-2 mb-3">Address & Emergency Contact</h6>
+                                <h6 class="fw-bold border-bottom pb-2 mb-3">Endereço e Contato de Emergência</h6>
                             </div>
                             <div class="col-md-12 mb-3">
-                                <label for="address" class="form-label">Address</label>
+                                <label for="address" class="form-label">Endereço</label>
                                 <textarea class="form-control" id="address" name="address" rows="2"></textarea>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="emergency_contact_name" class="form-label">Emergency Contact Name</label>
+                                <label for="emergency_contact_name" class="form-label">Nome do Contato de Emergência</label>
                                 <input type="text" class="form-control" id="emergency_contact_name" name="emergency_contact_name">
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="emergency_contact_phone" class="form-label">Emergency Contact Phone</label>
+                                <label for="emergency_contact_phone" class="form-label">Telefone do Contato de Emergência</label>
                                 <input type="tel" class="form-control" id="emergency_contact_phone" name="emergency_contact_phone">
                             </div>
                         </div>
 
+                        <!-- Botões -->
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                             <a href="{{ url_for('patients.list_patients') }}" class="btn btn-secondary me-md-2">
-                                <i class="fas fa-times me-1"></i>Cancel
+                                <i class="fas fa-times me-1"></i>Cancelar
                             </a>
                             <button type="submit" class="btn btn-primary" onclick="return validateForm('createPatientForm')">
-                                <i class="fas fa-save me-1"></i>Save Patient
+                                <i class="fas fa-save me-1"></i>Salvar Paciente
                             </button>
                         </div>
                     </form>
@@ -139,11 +142,11 @@
 
 {% block scripts %}
 <script>
-    // Password confirmation validation
-    document.getElementById('confirm_password').addEventListener('input', function() {
+    // Validação de confirmação de senha
+    document.getElementById('confirm_password').addEventListener('input', function () {
         const password = document.getElementById('password').value;
         if (this.value !== password) {
-            this.setCustomValidity('Passwords do not match');
+            this.setCustomValidity('As senhas não coincidem');
         } else {
             this.setCustomValidity('');
         }

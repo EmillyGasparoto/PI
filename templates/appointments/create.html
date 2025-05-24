@@ -1,86 +1,87 @@
 {% extends "layout.html" %}
 
-{% block title %}Create Appointment - Clinic Management System{% endblock %}
+{% block title %}Agendar Consulta - Sistema de Gestão Clínica{% endblock %}
 
 {% block content %}
 <div class="container">
+    <!-- Breadcrumb e título -->
     <div class="row mb-4">
         <div class="col">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ url_for('auth.dashboard') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ url_for('appointments.list_appointments') }}">Appointments</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Create Appointment</li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('auth.dashboard') }}">Painel</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('appointments.list_appointments') }}">Consultas</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Agendar Consulta</li>
                 </ol>
             </nav>
-            <h1>
-                <i class="fas fa-calendar-plus me-2"></i>Schedule New Appointment
-            </h1>
+            <h1><i class="fas fa-calendar-plus me-2"></i>Nova Consulta</h1>
         </div>
     </div>
 
     <div class="row">
+        <!-- Formulário -->
         <div class="col-md-8 mx-auto">
             <div class="card">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="card-title mb-0">Appointment Details</h5>
+                    <h5 class="mb-0">Detalhes da Consulta</h5>
                 </div>
                 <div class="card-body">
                     <form method="POST" action="{{ url_for('appointments.create_appointment') }}" id="createAppointmentForm" novalidate>
                         <div class="row mb-3">
-                            <!-- Doctor selection -->
-                            <div class="col-md-6 mb-3">
-                                <label for="doctor_id" class="form-label required">Doctor</label>
+                            <!-- Médico -->
+                            <div class="col-md-6">
+                                <label for="doctor_id" class="form-label required">Médico</label>
                                 <select class="form-select" id="doctor_id" name="doctor_id" required>
-                                    <option value="" selected disabled>Select a doctor</option>
+                                    <option value="" disabled selected>Selecione um médico</option>
                                     {% for doctor in doctors %}
-                                    <option value="{{ doctor.id }}">{{ doctor.full_name }} - {{ doctor.specialization.name if doctor.specialization else 'General' }}</option>
+                                    <option value="{{ doctor.id }}">{{ doctor.full_name }} - {{ doctor.specialization.name if doctor.specialization else 'Geral' }}</option>
                                     {% endfor %}
                                 </select>
-                                <div class="invalid-feedback">Please select a doctor.</div>
+                                <div class="invalid-feedback">Selecione um médico.</div>
                             </div>
 
-                            <!-- Patient selection (only for admin and staff) -->
+                            <!-- Paciente (apenas para admin/staff) -->
                             {% if current_user.role.value in ['admin', 'staff'] %}
-                            <div class="col-md-6 mb-3">
-                                <label for="patient_id" class="form-label required">Patient</label>
+                            <div class="col-md-6">
+                                <label for="patient_id" class="form-label required">Paciente</label>
                                 <select class="form-select" id="patient_id" name="patient_id" required>
-                                    <option value="" selected disabled>Select a patient</option>
+                                    <option value="" disabled selected>Selecione um paciente</option>
                                     {% for patient in patients %}
                                     <option value="{{ patient.id }}">{{ patient.full_name }}</option>
                                     {% endfor %}
                                 </select>
-                                <div class="invalid-feedback">Please select a patient.</div>
+                                <div class="invalid-feedback">Selecione um paciente.</div>
                             </div>
                             {% endif %}
                         </div>
 
+                        <!-- Data e Hora -->
                         <div class="row mb-3">
-                            <!-- Date and time selection -->
-                            <div class="col-md-6 mb-3">
-                                <label for="appointment_date" class="form-label required">Date</label>
+                            <div class="col-md-6">
+                                <label for="appointment_date" class="form-label required">Data</label>
                                 <input type="date" class="form-control" id="appointment_date" name="appointment_date" required>
-                                <div class="invalid-feedback">Please select a date.</div>
+                                <div class="invalid-feedback">Selecione uma data.</div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="appointment_time" class="form-label required">Time</label>
+                            <div class="col-md-6">
+                                <label for="appointment_time" class="form-label required">Hora</label>
                                 <input type="time" class="form-control" id="appointment_time" name="appointment_time" required>
-                                <div class="invalid-feedback">Please select a time.</div>
+                                <div class="invalid-feedback">Selecione um horário.</div>
                             </div>
                         </div>
 
-                        <!-- Reason for appointment -->
+                        <!-- Motivo -->
                         <div class="mb-3">
-                            <label for="reason" class="form-label">Reason for Appointment</label>
-                            <textarea class="form-control" id="reason" name="reason" rows="3" placeholder="Briefly describe the reason for this appointment..."></textarea>
+                            <label for="reason" class="form-label">Motivo da Consulta</label>
+                            <textarea class="form-control" id="reason" name="reason" rows="3" placeholder="Descreva brevemente o motivo..."></textarea>
                         </div>
 
+                        <!-- Ações -->
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a href="{{ url_for('appointments.list_appointments') }}" class="btn btn-secondary me-md-2">
-                                <i class="fas fa-times me-1"></i>Cancel
+                            <a href="{{ url_for('appointments.list_appointments') }}" class="btn btn-secondary me-2">
+                                <i class="fas fa-times me-1"></i>Cancelar
                             </a>
                             <button type="submit" class="btn btn-primary" onclick="return validateForm('createAppointmentForm')">
-                                <i class="fas fa-calendar-check me-1"></i>Schedule Appointment
+                                <i class="fas fa-calendar-check me-1"></i>Agendar
                             </button>
                         </div>
                     </form>
@@ -88,33 +89,33 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <!-- Informações -->
+        <div class="col-md-4 mt-4 mt-md-0">
             <div class="card">
                 <div class="card-header bg-info text-white">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-info-circle me-2"></i>Information
-                    </h5>
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Informações</h5>
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
-                        <h6 class="fw-bold">Scheduling Guidelines</h6>
+                        <h6 class="fw-bold">Regras de Agendamento</h6>
                         <ul>
-                            <li>Appointments can only be scheduled for future dates.</li>
-                            <li>Typical appointment duration is 30 minutes.</li>
-                            <li>Make sure to arrive 15 minutes before your scheduled time.</li>
-                            <li>If you need to cancel, please do so at least 24 hours in advance.</li>
+                            <li>Apenas datas futuras são permitidas.</li>
+                            <li>Duração padrão: 30 minutos.</li>
+                            <li>Chegar com 15 minutos de antecedência.</li>
+                            <li>Cancelamentos devem ser feitos com 24h de antecedência.</li>
                         </ul>
                     </div>
 
                     <div class="mb-3">
-                        <h6 class="fw-bold">Consultation Fees</h6>
-                        <p>The consultation fee varies by doctor and specialization. The fee will be displayed when you select a doctor.</p>
+                        <h6 class="fw-bold">Taxas de Consulta</h6>
+                        <p>As taxas variam conforme o médico e especialidade. Serão exibidas ao selecionar um médico.</p>
                     </div>
 
+                    <!-- Detalhes do médico -->
                     <div id="doctor-details" class="d-none">
-                        <h6 class="fw-bold">Doctor Details</h6>
+                        <h6 class="fw-bold">Detalhes do Médico</h6>
                         <div id="doctor-info" class="alert alert-secondary">
-                            Please select a doctor to view their details.
+                            Selecione um médico para ver os detalhes.
                         </div>
                     </div>
                 </div>
@@ -122,24 +123,26 @@
         </div>
     </div>
 </div>
+
 {% endblock %}
 
 {% block scripts %}
 <script>
-    // Set minimum date to today
+    // Define data mínima como hoje
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('appointment_date').setAttribute('min', today);
 
-    // Handle doctor selection to show details
-    document.getElementById('doctor_id').addEventListener('change', function() {
-        const doctorId = this.value;
-        if (doctorId) {
-            const doctorOption = this.options[this.selectedIndex];
-            const doctorName = doctorOption.text;
+    // Exibe detalhes do médico
+    document.getElementById('doctor_id').addEventListener('change', function () {
+        const selectedOption = this.options[this.selectedIndex];
+        const doctorName = selectedOption.text;
+
+        if (this.value) {
             document.getElementById('doctor-details').classList.remove('d-none');
-            document.getElementById('doctor-info').innerHTML = 
-                `Selected: <strong>${doctorName}</strong><br>
-                 Please check the doctor's availability and schedule your appointment accordingly.`;
+            document.getElementById('doctor-info').innerHTML = `
+                Selecionado: <strong>${doctorName}</strong><br>
+                Verifique a disponibilidade do médico antes de confirmar.
+            `;
         } else {
             document.getElementById('doctor-details').classList.add('d-none');
         }

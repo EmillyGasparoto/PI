@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}Patient Medical Records - Clinic Management System{% endblock %}
+{% block title %}Prontuário do Paciente - Sistema de Gestão Clínica{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -9,17 +9,15 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ url_for('auth.dashboard') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ url_for('medical_records.list_records') }}">Medical Records</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('medical_records.list_records') }}">Prontuários</a></li>
                     <li class="breadcrumb-item active" aria-current="page">{{ patient.full_name }}</li>
                 </ol>
             </nav>
             <div class="d-flex justify-content-between align-items-center">
-                <h1>
-                    <i class="fas fa-file-medical-alt me-2"></i>Medical Records: {{ patient.full_name }}
-                </h1>
+                <h1><i class="fas fa-file-medical-alt me-2"></i>Prontuários: {{ patient.full_name }}</h1>
                 {% if current_user.role.value in ['admin', 'doctor', 'staff'] %}
                 <a href="{{ url_for('medical_records.create_record') }}?patient_id={{ patient.id }}" class="btn btn-primary">
-                    <i class="fas fa-plus-circle me-1"></i>Add New Record
+                    <i class="fas fa-plus-circle me-1"></i>Adicionar Registro
                 </a>
                 {% endif %}
             </div>
@@ -28,19 +26,15 @@
 
     <div class="row">
         <div class="col-md-8">
-            <!-- Medical Records Timeline -->
             <div class="card mb-4">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-history me-2"></i>Medical History
-                    </h5>
+                    <h5 class="mb-0"><i class="fas fa-history me-2"></i>Histórico Médico</h5>
                 </div>
                 <div class="card-body">
-                    <!-- Search and filter -->
                     <div class="mb-3">
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-search"></i></span>
-                            <input type="text" id="searchRecords" class="form-control" placeholder="Search in medical records...">
+                            <input type="text" id="searchRecords" class="form-control" placeholder="Buscar nos prontuários...">
                         </div>
                     </div>
 
@@ -49,28 +43,25 @@
                         {% for record in records %}
                         <div class="card mb-3 record-item">
                             <div class="card-header d-flex justify-content-between align-items-center">
-                                <h6 class="mb-0">
-                                    <i class="fas fa-file-medical me-1"></i>
-                                    {{ record.created_at.strftime('%b %d, %Y') }}
-                                </h6>
+                                <h6 class="mb-0"><i class="fas fa-file-medical me-1"></i>{{ record.created_at.strftime('%d %b %Y') }}</h6>
                                 <div>
-                                    <span class="badge bg-secondary">Record #{{ record.id }}</span>
+                                    <span class="badge bg-secondary">Registro #{{ record.id }}</span>
                                     {% if record.appointment %}
-                                    <span class="badge bg-info">Appointment</span>
+                                    <span class="badge bg-info">Consulta</span>
                                     {% endif %}
                                 </div>
                             </div>
                             <div class="card-body">
-                                <h6 class="fw-bold">Diagnosis</h6>
+                                <h6 class="fw-bold">Diagnóstico</h6>
                                 <p>{{ record.diagnosis }}</p>
                                 
                                 {% if record.treatment %}
-                                <h6 class="fw-bold">Treatment</h6>
+                                <h6 class="fw-bold">Tratamento</h6>
                                 <p>{{ record.treatment }}</p>
                                 {% endif %}
                                 
                                 {% if record.prescription %}
-                                <h6 class="fw-bold">Prescription</h6>
+                                <h6 class="fw-bold">Prescrição</h6>
                                 <div class="card bg-light mb-3">
                                     <div class="card-body py-2">
                                         <pre class="mb-0" style="white-space: pre-wrap;">{{ record.prescription }}</pre>
@@ -80,15 +71,15 @@
                                 
                                 <div class="d-flex justify-content-between align-items-center mt-3">
                                     <small class="text-muted">
-                                        Created by: 
+                                        Criado por: 
                                         {% if record.creator %}
                                         {{ record.creator.first_name }} {{ record.creator.last_name }}
                                         {% else %}
-                                        Unknown
+                                        Desconhecido
                                         {% endif %}
                                     </small>
                                     <a href="{{ url_for('medical_records.view_record', id=record.id) }}" class="btn btn-sm btn-outline-primary">
-                                        <i class="fas fa-eye me-1"></i>View Details
+                                        <i class="fas fa-eye me-1"></i>Ver Detalhes
                                     </a>
                                 </div>
                             </div>
@@ -97,9 +88,9 @@
                     </div>
                     {% else %}
                     <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>No medical records found for this patient.
+                        <i class="fas fa-info-circle me-2"></i>Não há registros médicos para este paciente.
                         {% if current_user.role.value in ['admin', 'doctor', 'staff'] %}
-                        <a href="{{ url_for('medical_records.create_record') }}?patient_id={{ patient.id }}" class="alert-link">Create the first record</a>.
+                        <a href="{{ url_for('medical_records.create_record') }}?patient_id={{ patient.id }}" class="alert-link">Crie o primeiro registro</a>.
                         {% endif %}
                     </div>
                     {% endif %}
@@ -108,114 +99,109 @@
         </div>
 
         <div class="col-md-4">
-            <!-- Patient Information Card -->
             <div class="card mb-4">
                 <div class="card-header bg-info text-white">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-user-injured me-2"></i>Patient Information
-                    </h5>
+                    <h5 class="mb-0"><i class="fas fa-user-injured me-2"></i>Informações do Paciente</h5>
                 </div>
-                <div class="card-body">
-                    <div class="text-center mb-3">
-                        <div class="icon-bg bg-light rounded-circle mx-auto mb-2" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-user-injured fa-3x text-info"></i>
-                        </div>
-                        <h5>{{ patient.full_name }}</h5>
-                        <p class="text-muted">Patient ID: {{ patient.id }}</p>
+                <div class="card-body text-center">
+                    <div class="icon-bg bg-light rounded-circle mx-auto mb-2" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-user-injured fa-3x text-info"></i>
                     </div>
+                    <h5>{{ patient.full_name }}</h5>
+                    <p class="text-muted">ID do Paciente: {{ patient.id }}</p>
 
-                    <div class="mb-3">
-                        <h6 class="fw-bold border-bottom pb-2">Personal Details</h6>
-                        <table class="table table-sm">
-                            <tr>
-                                <th style="width: 40%">Date of Birth:</th>
-                                <td>{{ patient.date_of_birth.strftime('%b %d, %Y') if patient.date_of_birth else 'N/A' }}</td>
-                            </tr>
-                            <tr>
-                                <th>Age:</th>
-                                <td>
-                                    {% if patient.date_of_birth %}
-                                    {{ (now().date() - patient.date_of_birth).days // 365 }} years
-                                    {% else %}
-                                    N/A
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>Gender:</th>
-                                <td>{{ patient.gender }}</td>
-                            </tr>
-                            <tr>
-                                <th>Blood Group:</th>
-                                <td>{{ patient.blood_group or 'N/A' }}</td>
-                            </tr>
-                        </table>
-                    </div>
+                    <hr>
 
-                    <div class="mb-3">
-                        <h6 class="fw-bold border-bottom pb-2">Contact Information</h6>
-                        <table class="table table-sm">
-                            <tr>
-                                <th style="width: 40%">Phone:</th>
-                                <td>{{ patient.phone or 'N/A' }}</td>
-                            </tr>
-                            <tr>
-                                <th>Email:</th>
-                                <td>{{ patient.user.email }}</td>
-                            </tr>
-                            <tr>
-                                <th>Address:</th>
-                                <td>{{ patient.address or 'N/A' }}</td>
-                            </tr>
-                        </table>
-                    </div>
+                    <h6 class="fw-bold">Detalhes Pessoais</h6>
+                    <table class="table table-sm mb-3">
+                        <tr>
+                            <th>Data de Nascimento:</th>
+                            <td>{{ patient.date_of_birth.strftime('%d/%m/%Y') if patient.date_of_birth else 'N/D' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Idade:</th>
+                            <td>
+                                {% if patient.date_of_birth %}
+                                {{ (now().date() - patient.date_of_birth).days // 365 }} anos
+                                {% else %}
+                                N/D
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Gênero:</th>
+                            <td>{{ patient.gender or 'N/D' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Tipo Sanguíneo:</th>
+                            <td>{{ patient.blood_group or 'N/D' }}</td>
+                        </tr>
+                    </table>
+
+                    <h6 class="fw-bold">Contato</h6>
+                    <table class="table table-sm">
+                        <tr>
+                            <th>Telefone:</th>
+                            <td>{{ patient.phone or 'N/D' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Email:</th>
+                            <td>{{ patient.user.email }}</td>
+                        </tr>
+                        <tr>
+                            <th>Endereço:</th>
+                            <td>{{ patient.address or 'N/D' }}</td>
+                        </tr>
+                    </table>
 
                     <div class="d-grid gap-2">
                         <a href="{{ url_for('patients.view_patient', id=patient.id) }}" class="btn btn-outline-info">
-                            <i class="fas fa-user me-1"></i>View Full Profile
+                            <i class="fas fa-user me-1"></i>Ver Perfil Completo
                         </a>
                         {% if current_user.role.value in ['admin', 'doctor', 'staff'] %}
                         <a href="{{ url_for('appointments.create_appointment') }}?patient_id={{ patient.id }}" class="btn btn-outline-primary">
-                            <i class="fas fa-calendar-plus me-1"></i>Schedule Appointment
+                            <i class="fas fa-calendar-plus me-1"></i>Agendar Consulta
                         </a>
                         {% endif %}
                     </div>
                 </div>
             </div>
 
-            <!-- Recent Appointments Card -->
             <div class="card mb-4">
                 <div class="card-header bg-success text-white">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-calendar-check me-2"></i>Recent Appointments
-                    </h5>
+                    <h5 class="mb-0"><i class="fas fa-calendar-check me-2"></i>Consultas Recentes</h5>
                 </div>
                 <div class="card-body">
                     {% if patient.appointments.all()|length > 0 %}
                     <div class="list-group list-group-flush">
                         {% for appointment in patient.appointments.order_by('appointment_date desc').limit(5).all() %}
                         <div class="list-group-item">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h6 class="mb-1">{{ appointment.appointment_date.strftime('%b %d, %Y') }}</h6>
-                                <span class="badge {{ 'bg-info' if appointment.status.value == 'scheduled' else 'bg-success' if appointment.status.value == 'completed' else 'bg-danger' if appointment.status.value == 'cancelled' else 'bg-warning' }}">
-                                    {{ appointment.status.value|title }}
+                            <div class="d-flex justify-content-between">
+                                <h6 class="mb-1">{{ appointment.appointment_date.strftime('%d/%m/%Y') }}</h6>
+                                <span class="badge 
+                                    {% if appointment.status.value == 'scheduled' %}bg-info
+                                    {% elif appointment.status.value == 'completed' %}bg-success
+                                    {% elif appointment.status.value == 'cancelled' %}bg-danger
+                                    {% else %}bg-warning
+                                    {% endif %}">
+                                    {{ appointment.status.value|capitalize }}
                                 </span>
                             </div>
                             <p class="mb-1">{{ appointment.doctor.full_name }}</p>
-                            <small>{{ appointment.reason|truncate(50) if appointment.reason else 'No reason specified' }}</small>
+                            <small>{{ appointment.reason|truncate(50) if appointment.reason else 'Sem motivo especificado' }}</small>
                             <div class="mt-2">
-                                <a href="{{ url_for('appointments.view_appointment', id=appointment.id) }}" class="btn btn-sm btn-outline-secondary">View</a>
+                                <a href="{{ url_for('appointments.view_appointment', id=appointment.id) }}" class="btn btn-sm btn-outline-secondary">Ver</a>
                             </div>
                         </div>
                         {% endfor %}
                     </div>
                     {% if patient.appointments.count() > 5 %}
                     <div class="d-grid gap-2 mt-2">
-                        <a href="{{ url_for('appointments.list_appointments') }}" class="btn btn-sm btn-outline-success">View All Appointments</a>
+                        <a href="{{ url_for('appointments.list_appointments') }}" class="btn btn-sm btn-outline-success">Ver Todas</a>
                     </div>
                     {% endif %}
                     {% else %}
-                    <p class="text-center">No appointment history found.</p>
+                    <p class="text-center">Nenhum histórico de consultas encontrado.</p>
                     {% endif %}
                 </div>
             </div>
@@ -226,18 +212,11 @@
 
 {% block scripts %}
 <script>
-    // Search functionality for medical records
     document.getElementById('searchRecords').addEventListener('keyup', function() {
-        let searchText = this.value.toLowerCase();
-        let records = document.querySelectorAll('.record-item');
-        
-        records.forEach(function(record) {
-            let recordText = record.textContent.toLowerCase();
-            if (recordText.includes(searchText)) {
-                record.style.display = '';
-            } else {
-                record.style.display = 'none';
-            }
+        const filtro = this.value.toLowerCase();
+        document.querySelectorAll('.record-item').forEach(record => {
+            const texto = record.textContent.toLowerCase();
+            record.style.display = texto.includes(filtro) ? '' : 'none';
         });
     });
 </script>

@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}Login - Clinic Management System{% endblock %}
+{% block title %}Login - Sistema de Gestão Clínica{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
@@ -8,20 +8,20 @@
         <div class="card">
             <div class="card-header bg-primary text-white">
                 <h3 class="mb-0">
-                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                    <i class="fas fa-sign-in-alt me-2"></i>Entrar
                 </h3>
             </div>
             <div class="card-body">
                 <form method="POST" action="{{ url_for('auth.login') }}">
                     <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
+                        <label for="username" class="form-label">Usuário</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-user"></i></span>
                             <input type="text" class="form-control" id="username" name="username" required>
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
+                        <label for="password" class="form-label">Senha</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-lock"></i></span>
                             <input type="password" class="form-control" id="password" name="password" required>
@@ -29,17 +29,17 @@
                     </div>
                     <div class="mb-3 form-check">
                         <input type="checkbox" class="form-check-input" id="remember" name="remember">
-                        <label class="form-check-label" for="remember">Remember me</label>
+                        <label class="form-check-label" for="remember">Lembrar de mim</label>
                     </div>
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                            <i class="fas fa-sign-in-alt me-2"></i>Entrar
                         </button>
                     </div>
                 </form>
             </div>
             <div class="card-footer text-center">
-                <p class="mb-0">Don't have an account? <a href="{{ url_for('auth.register') }}">Register here</a></p>
+                <p class="mb-0">Não tem uma conta? <a href="{{ url_for('auth.register') }}">Cadastre-se</a></p>
             </div>
         </div>
     </div>

@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}Doctor Details - Clinic Management System{% endblock %}
+{% block title %}Detalhes do Doutor - Sistema de Gestão Clínica{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -8,34 +8,34 @@
         <div class="col">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ url_for('auth.dashboard') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ url_for('doctors.list_doctors') }}">Doctors</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Doctor Details</li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('auth.dashboard') }}">Painel</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('doctors.list_doctors') }}">Doutores</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Detalhes do Doutor</li>
                 </ol>
             </nav>
             <h1>
-                <i class="fas fa-user-md me-2"></i>Doctor Profile
+                <i class="fas fa-user-md me-2"></i>Perfil do Doutor
             </h1>
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-8">
-            <!-- Doctor Information -->
+            <!-- Informações do Doutor -->
             <div class="card mb-4">
                 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">
-                        <i class="fas fa-info-circle me-2"></i>Doctor Information
+                        <i class="fas fa-info-circle me-2"></i>Informações do Doutor
                     </h5>
                     <div>
                         {% if current_user.role.value == 'admin' or (current_user.role.value == 'doctor' and current_user.doctor_profile and current_user.doctor_profile.id == doctor.id) %}
                         <a href="{{ url_for('doctors.edit_doctor', id=doctor.id) }}" class="btn btn-sm btn-light">
-                            <i class="fas fa-edit me-1"></i>Edit
+                            <i class="fas fa-edit me-1"></i>Editar
                         </a>
                         {% endif %}
                         {% if current_user.role.value == 'admin' %}
                         <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteDoctorModal">
-                            <i class="fas fa-trash me-1"></i>Delete
+                            <i class="fas fa-trash me-1"></i>Excluir
                         </button>
                         {% endif %}
                     </div>
@@ -43,96 +43,67 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="mb-3">
-                                <h6 class="fw-bold">Personal Details</h6>
-                                <table class="table table-sm">
-                                    <tr>
-                                        <th style="width: 40%">Name:</th>
-                                        <td>{{ doctor.full_name }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Email:</th>
-                                        <td>{{ doctor.user.email }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>License Number:</th>
-                                        <td>{{ doctor.license_number }}</td>
-                                    </tr>
-                                </table>
-                            </div>
+                            <h6 class="fw-bold mb-3">Dados Pessoais</h6>
+                            <table class="table table-sm">
+                                <tr><th style="width: 40%">Nome:</th><td>{{ doctor.full_name }}</td></tr>
+                                <tr><th>Email:</th><td>{{ doctor.user.email }}</td></tr>
+                                <tr><th>Registro Profissional:</th><td>{{ doctor.license_number }}</td></tr>
+                            </table>
                         </div>
-                        
                         <div class="col-md-6">
-                            <div class="mb-3">
-                                <h6 class="fw-bold">Professional Details</h6>
-                                <table class="table table-sm">
-                                    <tr>
-                                        <th style="width: 40%">Specialization:</th>
-                                        <td>{{ doctor.specialization.name if doctor.specialization else 'N/A' }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Experience:</th>
-                                        <td>{{ doctor.experience_years }} years</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Consultation Fee:</th>
-                                        <td>${{ "%.2f"|format(doctor.consultation_fee) if doctor.consultation_fee else 'N/A' }}</td>
-                                    </tr>
-                                </table>
-                            </div>
+                            <h6 class="fw-bold mb-3">Dados Profissionais</h6>
+                            <table class="table table-sm">
+                                <tr><th style="width: 40%">Especialidade:</th><td>{{ doctor.specialization.name if doctor.specialization else 'N/A' }}</td></tr>
+                                <tr><th>Experiência:</th><td>{{ doctor.experience_years }} anos</td></tr>
+                                <tr><th>Consulta:</th><td>{{ doctor.consultation_fee | default('N/A') | format('%.2f') if doctor.consultation_fee else 'N/A' }}</td></tr>
+                            </table>
                         </div>
                     </div>
-
                     <div class="row">
                         <div class="col-12">
-                            <h6 class="fw-bold">Availability</h6>
-                            <p>{{ doctor.availability or 'No availability information provided.' }}</p>
+                            <h6 class="fw-bold">Disponibilidade</h6>
+                            <p>{{ doctor.availability or 'Nenhuma informação disponível.' }}</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Upcoming Appointments -->
+            <!-- Próximas Consultas -->
             <div class="card mb-4">
                 <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">
-                        <i class="fas fa-calendar-check me-2"></i>Upcoming Appointments
+                        <i class="fas fa-calendar-check me-2"></i>Próximas Consultas
                     </h5>
-                    <div>
-                        <a href="{{ url_for('appointments.create_appointment') }}" class="btn btn-sm btn-light">
-                            <i class="fas fa-plus-circle me-1"></i>New Appointment
-                        </a>
-                    </div>
+                    <a href="{{ url_for('appointments.create_appointment') }}" class="btn btn-sm btn-light">
+                        <i class="fas fa-plus-circle me-1"></i>Nova Consulta
+                    </a>
                 </div>
                 <div class="card-body">
-                    {% if doctor.appointments.all()|length > 0 %}
+                    {% set agendadas = doctor.appointments.filter_by(status='scheduled').order_by('appointment_date', 'appointment_time').limit(5).all() %}
+                    {% if agendadas %}
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>Date</th>
-                                    <th>Time</th>
-                                    <th>Patient</th>
+                                    <th>Data</th>
+                                    <th>Hora</th>
+                                    <th>Paciente</th>
                                     <th>Status</th>
-                                    <th>Actions</th>
+                                    <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for appointment in doctor.appointments.filter_by(status='scheduled').order_by('appointment_date', 'appointment_time').limit(5).all() %}
+                                {% for appt in agendadas %}
                                 <tr>
-                                    <td>{{ appointment.appointment_date.strftime('%b %d, %Y') }}</td>
-                                    <td>{{ appointment.appointment_time.strftime('%I:%M %p') }}</td>
-                                    <td>{{ appointment.patient.full_name }}</td>
-                                    <td><span class="badge bg-info">Scheduled</span></td>
+                                    <td>{{ appt.appointment_date.strftime('%d %b, %Y') }}</td>
+                                    <td>{{ appt.appointment_time.strftime('%H:%M') }}</td>
+                                    <td>{{ appt.patient.full_name }}</td>
+                                    <td><span class="badge bg-info">Agendada</span></td>
                                     <td>
-                                        <a href="{{ url_for('appointments.view_appointment', id=appointment.id) }}" class="btn btn-sm btn-primary">
+                                        <a href="{{ url_for('appointments.view_appointment', id=appt.id) }}" class="btn btn-sm btn-primary" title="Ver detalhes">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                     </td>
-                                </tr>
-                                {% else %}
-                                <tr>
-                                    <td colspan="5" class="text-center">No upcoming appointments.</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -140,14 +111,14 @@
                     </div>
                     {% if doctor.appointments.filter_by(status='scheduled').count() > 5 %}
                     <div class="d-grid gap-2 mt-3">
-                        <a href="{{ url_for('appointments.list_appointments') }}" class="btn btn-sm btn-outline-info">View All Appointments</a>
+                        <a href="{{ url_for('appointments.list_appointments') }}" class="btn btn-sm btn-outline-info">Ver todas as consultas</a>
                     </div>
                     {% endif %}
                     {% else %}
-                    <p class="text-center">No appointments found for this doctor.</p>
+                    <p class="text-center">Nenhuma consulta agendada.</p>
                     <div class="d-grid gap-2">
                         <a href="{{ url_for('appointments.create_appointment') }}" class="btn btn-outline-info">
-                            <i class="fas fa-plus-circle me-1"></i>Schedule Appointment
+                            <i class="fas fa-plus-circle me-1"></i>Agendar Consulta
                         </a>
                     </div>
                     {% endif %}
@@ -156,89 +127,75 @@
         </div>
 
         <div class="col-md-4">
-            <!-- Account Information -->
+            <!-- Informações da Conta -->
             <div class="card mb-4">
                 <div class="card-header bg-secondary text-white">
                     <h5 class="card-title mb-0">
-                        <i class="fas fa-user-circle me-2"></i>Account Information
+                        <i class="fas fa-user-circle me-2"></i>Informações da Conta
                     </h5>
                 </div>
                 <div class="card-body">
                     <table class="table table-sm">
-                        <tr>
-                            <th style="width: 40%">Username:</th>
-                            <td>{{ doctor.user.username }}</td>
-                        </tr>
-                        <tr>
-                            <th>Registered:</th>
-                            <td>{{ doctor.user.created_at.strftime('%b %d, %Y') }}</td>
-                        </tr>
-                        <tr>
-                            <th>Last Updated:</th>
-                            <td>{{ doctor.updated_at.strftime('%b %d, %Y') }}</td>
-                        </tr>
-                        <tr>
-                            <th>Status:</th>
-                            <td><span class="badge bg-success">Active</span></td>
-                        </tr>
+                        <tr><th style="width: 40%">Usuário:</th><td>{{ doctor.user.username }}</td></tr>
+                        <tr><th>Registro:</th><td>{{ doctor.user.created_at.strftime('%d %b, %Y') }}</td></tr>
+                        <tr><th>Última Atualização:</th><td>{{ doctor.updated_at.strftime('%d %b, %Y') }}</td></tr>
+                        <tr><th>Status:</th><td><span class="badge bg-success">Ativo</span></td></tr>
                     </table>
                 </div>
             </div>
 
-            <!-- Recent Patients -->
+            <!-- Pacientes Recentes -->
             <div class="card mb-4">
                 <div class="card-header bg-success text-white">
                     <h5 class="card-title mb-0">
-                        <i class="fas fa-user-injured me-2"></i>Recent Patients
+                        <i class="fas fa-user-injured me-2"></i>Pacientes Recentes
                     </h5>
                 </div>
                 <div class="card-body">
-                    {% set recent_patients = doctor.appointments.join(Patient).order_by(Appointment.appointment_date.desc()).limit(5).all() %}
-                    {% if recent_patients|length > 0 %}
+                    {% set recentes = doctor.appointments.join(Patient).order_by(Appointment.appointment_date.desc()).limit(5).all() %}
+                    {% if recentes %}
                     <ul class="list-group list-group-flush">
-                        {% for appointment in recent_patients %}
+                        {% for appt in recentes %}
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <a href="{{ url_for('patients.view_patient', id=appointment.patient.id) }}" class="text-decoration-none">
-                                    {{ appointment.patient.full_name }}
-                                </a>
-                            </div>
-                            <span class="badge bg-secondary rounded-pill">{{ appointment.appointment_date.strftime('%b %d') }}</span>
+                            <a href="{{ url_for('patients.view_patient', id=appt.patient.id) }}" class="text-decoration-none">
+                                {{ appt.patient.full_name }}
+                            </a>
+                            <span class="badge bg-secondary rounded-pill">{{ appt.appointment_date.strftime('%d %b') }}</span>
                         </li>
                         {% endfor %}
                     </ul>
                     {% else %}
-                    <p class="text-center">No recent patients.</p>
+                    <p class="text-center">Nenhum paciente recente.</p>
                     {% endif %}
                 </div>
             </div>
 
-            <!-- Schedule Appointment Button -->
+            <!-- Botão Agendar Consulta -->
             <div class="d-grid gap-2">
                 <a href="{{ url_for('appointments.create_appointment') }}?doctor_id={{ doctor.id }}" class="btn btn-primary">
-                    <i class="fas fa-calendar-plus me-2"></i>Schedule an Appointment
+                    <i class="fas fa-calendar-plus me-2"></i>Agendar Consulta
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- Delete Doctor Modal -->
+    <!-- Modal de Exclusão -->
     {% if current_user.role.value == 'admin' %}
     <div class="modal fade" id="deleteDoctorModal" tabindex="-1" aria-labelledby="deleteDoctorModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title" id="deleteDoctorModalLabel">Confirm Delete</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title" id="deleteDoctorModalLabel">Confirmar Exclusão</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to delete <strong>{{ doctor.full_name }}</strong>?</p>
-                    <p class="text-danger">This action cannot be undone and will delete all associated records!</p>
+                    <p>Tem certeza que quer excluir <strong>{{ doctor.full_name }}</strong>?</p>
+                    <p class="text-danger">Essa ação é irreversível e apagará todos os registros relacionados!</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <form action="{{ url_for('doctors.delete_doctor', id=doctor.id) }}" method="POST">
-                        <button type="submit" class="btn btn-danger">Delete</button>
+                        <button type="submit" class="btn btn-danger">Excluir</button>
                     </form>
                 </div>
             </div>

@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}Add New Doctor - Clinic Management System{% endblock %}
+{% block title %}Adicionar Novo Médico - Sistema de Gestão Clínica{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -8,14 +8,12 @@
         <div class="col">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ url_for('auth.dashboard') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ url_for('doctors.list_doctors') }}">Doctors</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Add New Doctor</li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('auth.dashboard') }}">Painel</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('doctors.list_doctors') }}">Médicos</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Adicionar Novo Médico</li>
                 </ol>
             </nav>
-            <h1>
-                <i class="fas fa-user-md me-2"></i>Add New Doctor
-            </h1>
+            <h1><i class="fas fa-user-md me-2"></i>Adicionar Novo Médico</h1>
         </div>
     </div>
 
@@ -23,86 +21,83 @@
         <div class="col-md-10 mx-auto">
             <div class="card">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="card-title mb-0">Doctor Information</h5>
+                    <h5 class="card-title mb-0">Informações da Conta</h5>
                 </div>
                 <div class="card-body">
                     <form method="POST" action="{{ url_for('doctors.create_doctor') }}" id="createDoctorForm" novalidate>
                         <div class="row mb-3">
-                            <div class="col-12">
-                                <h6 class="fw-bold border-bottom pb-2 mb-3">Account Information</h6>
-                            </div>
                             <div class="col-md-6 mb-3">
-                                <label for="first_name" class="form-label required">First Name</label>
+                                <label for="first_name" class="form-label required">Nome</label>
                                 <input type="text" class="form-control" id="first_name" name="first_name" required>
-                                <div class="invalid-feedback">Please provide a first name.</div>
+                                <div class="invalid-feedback">Informe o nome.</div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="last_name" class="form-label required">Last Name</label>
+                                <label for="last_name" class="form-label required">Sobrenome</label>
                                 <input type="text" class="form-control" id="last_name" name="last_name" required>
-                                <div class="invalid-feedback">Please provide a last name.</div>
+                                <div class="invalid-feedback">Informe o sobrenome.</div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="email" class="form-label required">Email</label>
+                                <label for="email" class="form-label required">E-mail</label>
                                 <input type="email" class="form-control" id="email" name="email" required>
-                                <div class="invalid-feedback">Please provide a valid email address.</div>
+                                <div class="invalid-feedback">Informe um e-mail válido.</div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="username" class="form-label required">Username</label>
+                                <label for="username" class="form-label required">Usuário</label>
                                 <input type="text" class="form-control" id="username" name="username" required>
-                                <div class="invalid-feedback">Please provide a username.</div>
+                                <div class="invalid-feedback">Informe um nome de usuário.</div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="password" class="form-label required">Password</label>
+                                <label for="password" class="form-label required">Senha</label>
                                 <input type="password" class="form-control" id="password" name="password" required>
-                                <div class="form-text">Password must be at least 8 characters long.</div>
-                                <div class="invalid-feedback">Please provide a password.</div>
+                                <div class="form-text">Senha com no mínimo 8 caracteres.</div>
+                                <div class="invalid-feedback">Informe a senha.</div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="confirm_password" class="form-label required">Confirm Password</label>
+                                <label for="confirm_password" class="form-label required">Confirmar Senha</label>
                                 <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
-                                <div class="invalid-feedback">Passwords do not match.</div>
+                                <div class="invalid-feedback">As senhas não coincidem.</div>
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <div class="col-12">
-                                <h6 class="fw-bold border-bottom pb-2 mb-3">Professional Details</h6>
+                                <h5 class="fw-bold border-bottom pb-2 mb-3">Detalhes Profissionais</h5>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="specialization_id" class="form-label">Specialization</label>
+                                <label for="specialization_id" class="form-label">Especialização</label>
                                 <select class="form-select" id="specialization_id" name="specialization_id">
-                                    <option value="">Select specialization (optional)</option>
+                                    <option value="">Selecione a especialização (opcional)</option>
                                     {% for specialization in specializations %}
                                     <option value="{{ specialization.id }}">{{ specialization.name }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="license_number" class="form-label required">License Number</label>
+                                <label for="license_number" class="form-label required">Número do CRM</label>
                                 <input type="text" class="form-control" id="license_number" name="license_number" required>
-                                <div class="invalid-feedback">Please provide a license number.</div>
+                                <div class="invalid-feedback">Informe o número do CRM.</div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="experience_years" class="form-label">Years of Experience</label>
+                                <label for="experience_years" class="form-label">Anos de Experiência</label>
                                 <input type="number" class="form-control" id="experience_years" name="experience_years" min="0" max="70">
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="consultation_fee" class="form-label">Consultation Fee ($)</label>
+                                <label for="consultation_fee" class="form-label">Valor da Consulta (R$)</label>
                                 <input type="number" class="form-control" id="consultation_fee" name="consultation_fee" min="0" step="0.01">
                             </div>
-                            <div class="col-md-12 mb-3">
-                                <label for="availability" class="form-label">Availability</label>
-                                <textarea class="form-control" id="availability" name="availability" rows="3" placeholder="e.g. Monday-Friday: 9:00 AM - 5:00 PM"></textarea>
-                                <div class="form-text">Describe your availability for appointments.</div>
+                            <div class="col-12 mb-3">
+                                <label for="availability" class="form-label">Disponibilidade</label>
+                                <textarea class="form-control" id="availability" name="availability" rows="3" placeholder="Ex: Seg - Sex: 9h - 17h"></textarea>
+                                <div class="form-text">Informe os horários disponíveis para atendimento.</div>
                             </div>
                         </div>
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                             <a href="{{ url_for('doctors.list_doctors') }}" class="btn btn-secondary me-md-2">
-                                <i class="fas fa-times me-1"></i>Cancel
+                                <i class="fas fa-times me-1"></i>Cancelar
                             </a>
                             <button type="submit" class="btn btn-primary" onclick="return validateForm('createDoctorForm')">
-                                <i class="fas fa-save me-1"></i>Save Doctor
+                                <i class="fas fa-save me-1"></i>Salvar Médico
                             </button>
                         </div>
                     </form>
@@ -115,11 +110,11 @@
 
 {% block scripts %}
 <script>
-    // Password confirmation validation
+    // Validação de confirmação de senha
     document.getElementById('confirm_password').addEventListener('input', function() {
-        const password = document.getElementById('password').value;
-        if (this.value !== password) {
-            this.setCustomValidity('Passwords do not match');
+        const senha = document.getElementById('password').value;
+        if (this.value !== senha) {
+            this.setCustomValidity('As senhas não coincidem');
         } else {
             this.setCustomValidity('');
         }
