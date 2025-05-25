@@ -458,3 +458,30 @@ def api_create_specialization():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 400
+        from flask import Blueprint, render_template
+
+from flask_login import login_required
+from models import User
+from sqlalchemy import and_
+
+doctors = User.query.filter(User.role == "doctor").all()
+
+@doctors_bp.route('/')
+def listar_medicos():
+    doctors = [
+        {'id': 1, 'name': 'Dra. Ana Lima'},
+        {'id': 2, 'name': 'Dr. João Mendes'},
+        {'id': 3, 'name': 'Dra. Camila Rocha'},
+    ]
+    return render_template('medicos.html', doctors=doctors)
+
+@doctors_bp.route('/available')
+@login_required
+def listar_medicos_disponiveis():
+    doctors = User.query.filter(
+        and_(
+            User.role == "doctor",
+            User.is_active == True
+        )
+    ).all()
+    return render_template('medicos_disponiveis.html', doctors=doctors)

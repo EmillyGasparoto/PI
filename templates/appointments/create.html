@@ -33,9 +33,10 @@
                                 <label for="doctor_id" class="form-label required">Médico</label>
                                 <select class="form-select" id="doctor_id" name="doctor_id" required>
                                     <option value="" disabled selected>Selecione um médico</option>
-                                    {% for doctor in doctors %}
-                                    <option value="{{ doctor.id }}">{{ doctor.full_name }} - {{ doctor.specialization.name if doctor.specialization else 'Geral' }}</option>
-                                    {% endfor %}
+                                    <option value="1">Dra. Ana Souza - Cardiologista</option>
+                                    <option value="2">Dr. João Pereira - Pediatra</option>
+                                    <option value="3">Dra. Carla Mendes - Geral</option>
+                                    <option value="4">Dr. Pedro Lima - Ortopedista</option>
                                 </select>
                                 <div class="invalid-feedback">Selecione um médico.</div>
                             </div>

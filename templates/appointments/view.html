@@ -56,7 +56,6 @@
                                             {% elif appointment.status.value == 'cancelled' %}bg-danger
                                             {% else %}bg-warning
                                             {% endif %}">
-                                            {{ appointment.status.value|capitalize }}
                                         </span>
                                     </td>
                                 </tr>
@@ -197,8 +196,18 @@
                     </div>
                 </div>
             </div>
-
+            
             <!-- Informações do Médico -->
             <div class="card mb-4">
                 <div class="card-header bg-info text-white">
-                    <h5><i class="fas fa-hospital-user me-
+                    <h5><i class="fas fa-hospital-user me-2"></i>Informações do Médico</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Nome:</strong> {{ appointment.doctor.full_name }}</p>
+                    <p><strong>Especialidade:</strong> {{ appointment.doctor.specialty or 'Não especificada' }}</p>
+                    <p><strong>CRM:</strong> {{ appointment.doctor.crm or 'Não informado' }}</p>
+                    <!-- Outros detalhes, se desejar -->
+                </div>
+            </div>
+
+            {% endblock %}

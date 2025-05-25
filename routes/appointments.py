@@ -4,6 +4,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from app import db
 from models import User, UserRole, Patient, Doctor, Appointment, AppointmentStatus
 from datetime import datetime, date, time
+from datetime import datetime
 
 appointments_bp = Blueprint('appointments', __name__, url_prefix='/appointments')
 
@@ -34,6 +35,7 @@ def get_patient_appointments(patient_id):
 def get_doctor_appointments(doctor_id):
     return Appointment.query.filter_by(doctor_id=doctor_id).order_by(Appointment.appointment_date.desc(), Appointment.appointment_time.desc()).all()
 
+
 # Web Routes
 @appointments_bp.route('/')
 @login_required
@@ -41,19 +43,38 @@ def list_appointments():
     # Filter appointments based on user role
     if current_user.role == UserRole.PATIENT and current_user.patient_profile:
         appointments = get_patient_appointments(current_user.patient_profile.id)
-        return render_template('appointments/list.html', appointments=appointments, is_patient=True)
+        return render_template(
+            'appointments/list.html',
+            appointments=appointments,
+            is_patient=True,
+            now=datetime.now()
+        )
     
     elif current_user.role == UserRole.DOCTOR and current_user.doctor_profile:
         appointments = get_doctor_appointments(current_user.doctor_profile.id)
-        return render_template('appointments/list.html', appointments=appointments, is_doctor=True)
+        return render_template(
+            'appointments/list.html',
+            appointments=appointments,
+            is_doctor=True,
+            now=datetime.now()
+        )
     
     elif current_user.role in [UserRole.ADMIN, UserRole.STAFF]:
         # Admins and staff can see all appointments
-        appointments = Appointment.query.order_by(Appointment.appointment_date.desc(), Appointment.appointment_time.desc()).all()
-        return render_template('appointments/list.html', appointments=appointments, is_admin=True)
+        appointments = Appointment.query.order_by(
+            Appointment.appointment_date.desc(),
+            Appointment.appointment_time.desc()
+        ).all()
+        return render_template(
+            'appointments/list.html',
+            appointments=appointments,
+            is_admin=True,
+            now=datetime.now()
+        )
     
     flash('You do not have permission to view appointments.', 'danger')
     return redirect(url_for('auth.dashboard'))
+
 
 @appointments_bp.route('/<int:id>')
 @login_required
@@ -124,52 +145,65 @@ def create_appointment():
 @login_required
 def edit_appointment(id):
     appointment = verify_appointment_access(id)
-    
+
     # Get all doctors for the dropdown
     doctors = Doctor.query.join(User).all()
-    
+
     # For staff or admin, get all patients for the dropdown
     if current_user.role in [UserRole.ADMIN, UserRole.STAFF]:
         patients = Patient.query.join(User).all()
     else:
         patients = None
-    
+
+    status_labels = {
+        'scheduled': 'Agendada',
+        'completed': 'Concluída',
+        'cancelled': 'Cancelada',
+        'no_show': 'Faltou'
+    }
+
     if request.method == 'POST':
-        # Get appointment data
-        if current_user.role in [UserRole.ADMIN, UserRole.STAFF]:
-            appointment.doctor_id = request.form.get('doctor_id') or appointment.doctor_id
-            appointment.patient_id = request.form.get('patient_id') or appointment.patient_id
-        
         appointment_date_str = request.form.get('appointment_date')
         appointment_time_str = request.form.get('appointment_time')
         reason = request.form.get('reason')
         status_str = request.form.get('status')
         notes = request.form.get('notes')
-        
+
+        if current_user.role in [UserRole.ADMIN, UserRole.STAFF]:
+            appointment.doctor_id = request.form.get('doctor_id') or appointment.doctor_id
+            appointment.patient_id = request.form.get('patient_id') or appointment.patient_id
+
         try:
             if appointment_date_str:
                 appointment.appointment_date = datetime.strptime(appointment_date_str, '%Y-%m-%d').date()
-            
+
             if appointment_time_str:
                 appointment.appointment_time = datetime.strptime(appointment_time_str, '%H:%M').time()
-            
+
             if reason:
                 appointment.reason = reason
-            
+
             if status_str:
                 appointment.status = AppointmentStatus(status_str)
-            
+
             if notes:
                 appointment.notes = notes
-            
+
             db.session.commit()
             flash('Appointment updated successfully.', 'success')
             return redirect(url_for('appointments.view_appointment', id=id))
         except Exception as e:
             db.session.rollback()
             flash(f'Error updating appointment: {str(e)}', 'danger')
-    
-    return render_template('appointments/edit.html', appointment=appointment, doctors=doctors, patients=patients)
+
+    return render_template(
+        'appointments/edit.html',
+        appointment=appointment,
+        doctors=doctors,
+        patients=patients,
+        status_labels=status_labels
+    )
+
 
 @appointments_bp.route('/<int:id>/cancel', methods=['POST'])
 @login_required

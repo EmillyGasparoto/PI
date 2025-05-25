@@ -85,12 +85,13 @@
                         <div class="mb-3">
                             <label for="status" class="form-label">Status</label>
                             <select class="form-select" id="status" name="status">
-                                {% for status in ['scheduled', 'completed', 'cancelled', 'no_show'] %}
-                                <option value="{{ status }}" {{ 'selected' if appointment.status.value == status else '' }}>
-                                    {{ status|title|replace({'scheduled': 'Agendada', 'completed': 'Concluída', 'cancelled': 'Cancelada', 'no_show': 'Faltou'}) }}
+                            {% for status in status_labels %}
+                                <option value="{{ status }}" {% if appointment.status.value == status %}selected{% endif %}>
+                                    {{ status_labels[status] }}
                                 </option>
-                                {% endfor %}
+                            {% endfor %}
                             </select>
+
                             <div class="form-text">
                                 {% if current_user.role.value == 'patient' %}
                                 Como paciente, só pode cancelar a consulta.
@@ -129,7 +130,7 @@
                     <div class="mb-3">
                         <h6 class="fw-bold">Status Atual</h6>
                         <span class="badge {{ 'bg-info' if appointment.status.value == 'scheduled' else 'bg-success' if appointment.status.value == 'completed' else 'bg-danger' if appointment.status.value == 'cancelled' else 'bg-warning' }} mb-2">
-                            {{ appointment.status.value|title|replace({'scheduled': 'Agendada', 'completed': 'Concluída', 'cancelled': 'Cancelada', 'no_show': 'Faltou'}) }}
+                            {{ status_labels[appointment.status.value] }}
                         </span>
                         <p class="small text-muted mb-0">Criada: {{ appointment.created_at.strftime('%d %b %Y %H:%M') }}</p>
                         <p class="small text-muted">Última atualização: {{ appointment.updated_at.strftime('%d %b %Y %H:%M') }}</p>
@@ -183,9 +184,10 @@
     statusSelect.addEventListener('change', function() {
         if (this.value !== 'scheduled' && this.value !== 'cancelled') {
             alert('Como paciente, só pode cancelar a consulta.');
-            this.value = "{{ appointment.status.value }}";
+            this.value = {{ appointment.status.value|tojson }};
         }
     });
     {% endif %}
 </script>
 {% endblock %}
+
