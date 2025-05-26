@@ -1,3 +1,4 @@
+# Routes package initialization
 from .auth import auth_bp
 from .patients import patients_bp
 from .doctors import doctors_bp

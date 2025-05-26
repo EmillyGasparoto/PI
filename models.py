@@ -6,10 +6,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class UserRole(enum.Enum):
-    ADMIN = "admin"
-    DOCTOR = "doctor"
-    PATIENT = "patient"
-    STAFF = "staff"
+    ADMIN = "ADMIN"       
+    DOCTOR = "DOCTOR"
+    PATIENT = "PATIENT"
+    STAFF = "STAFF"
 
 
 class User(UserMixin, db.Model):

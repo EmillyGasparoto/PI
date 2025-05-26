@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app import db
 from models import User, UserRole, Doctor, Specialization
+from models import Doctor, Appointment, Patient
 from datetime import datetime
 import json
 
