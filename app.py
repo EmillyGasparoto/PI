@@ -9,6 +9,7 @@ from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 from flask_marshmallow import Marshmallow
 from flask_login import LoginManager, current_user
+from datetime import datetime
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -18,6 +19,8 @@ class Base(DeclarativeBase):
 
 # Create the app first
 app = Flask(__name__)
+app.jinja_env.add_extension('jinja2.ext.do')  
+app.jinja_env.globals['now'] = datetime.utcnow  
 app.secret_key = os.environ.get("SESSION_SECRET", "my-super-secret-key")
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)  # needed for url_for to generate with https
 
@@ -76,6 +79,15 @@ def load_user(user_id):
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('errors/404.html'), 404
+
+@app.errorhandler(403)
+def forbidden(e):
+    return render_template('errors/403.html'), 403
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

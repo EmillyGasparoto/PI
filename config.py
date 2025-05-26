@@ -2,14 +2,14 @@ import os
 
 class Config:
     """Base configuration."""
-    SECRET_KEY = os.environ.get('SESSION_SECRET', 'my-super-secret-key')
+    SECRET_KEY = os.environ.get("SESSION_SECRET", "secret-session-key")
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///clinic.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {
         "pool_recycle": 300,
         "pool_pre_ping": True,
     }
-    JWT_SECRET_KEY = os.environ.get('SESSION_SECRET', 'my-super-secret-key')
+    JWT_SECRET_KEY = os.environ.get("JWT_SECRET", "secret-jwt-key")  # Chave separada
     JWT_ACCESS_TOKEN_EXPIRES = 3600  # 1 hour
 
 

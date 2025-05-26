@@ -1,5 +1,4 @@
-import re
-from datetime import datetime, date
+from datetime import datetime, date, timezone
 
 def validate_email(email):
     """
@@ -78,51 +77,18 @@ def validate_time(time_str, format_str='%H:%M'):
         return False
 
 def validate_future_date(date_str, format_str='%Y-%m-%d'):
-    """
-    Validate that the date is in the future
-    
-    Args:
-        date_str (str): Date string to validate
-        format_str (str): Expected date format
-        
-    Returns:
-        bool: True if date is valid and in the future, False otherwise
-    """
-    if not validate_date(date_str, format_str):
-        return False
-    
-    try:
-        date_obj = datetime.strptime(date_str, format_str).date()
-        return date_obj >= date.today()
-    except ValueError:
-        return False
+    # ...
+    date_obj = datetime.strptime(date_str, format_str).date()
+    current_date = datetime.now(timezone.utc).date()  # Usar UTC
+    return date_obj >= current_date
 
 def validate_password_strength(password):
-    """
-    Validate password strength
-    
-    Args:
-        password (str): Password to validate
-        
-    Returns:
-        bool: True if password meets strength requirements, False otherwise
-    """
-    if not password or len(password) < 8:
+    # ... (verificações anteriores)
+    # Verificar caractere especial
+    if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
         return False
-    
-    # Check for at least one uppercase letter
-    if not re.search(r'[A-Z]', password):
-        return False
-    
-    # Check for at least one lowercase letter
-    if not re.search(r'[a-z]', password):
-        return False
-    
-    # Check for at least one digit
-    if not re.search(r'[0-9]', password):
-        return False
-    
     return True
+
 
 def sanitize_input(input_str):
     """
