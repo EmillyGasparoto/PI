@@ -36,9 +36,9 @@ flask db migrate
 flask db upgrade          
 
 
-8. Executar a aplicação
+# 8. Executar a aplicação
    
 flask run
 acessar (http://localhost:5000)
 
-Há outro branch com contribuições.
+# Há outro branch com contribuições.
