@@ -26,9 +26,14 @@ pip install -r requirements.txt
 
 6. Inicializar o banco de dados
    
-flask db init              # Apenas na primeira vez
-flask db migrate           # Cria uma migração
-flask db upgrade           # Aplica as migrações ao banco
+flask db init             
+# Apenas na primeira vez
+
+flask db migrate           
+# Cria uma migração
+
+flask db upgrade          
+# Aplica as migrações ao banco
 
 8. Executar a aplicação
    
